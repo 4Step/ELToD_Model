@@ -1,0 +1,10 @@
+;;<<Default Template>><<NETWORK>><<Default>>;;
+; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
+RUN PGM=NETWORK MSG='Covert Shapefile Network'
+FILEI LINKI[1] = "M:\kn815jk\FDOT District 4\I-95 Express Lanes 2013\GIS\I-95_Net_2013-0726\Links.dbf"
+FILEI NODEI[1] = "M:\kn815jk\FDOT District 4\I-95 Express Lanes 2013\GIS\I-95_Net_2013-0726\Nodes.dbf"
+
+FILEI GEOMI[1] = "M:\kn815jk\FDOT District 4\I-95 Express Lanes 2013\GIS\I-95_Net_2013-0726\Links.SHP"
+FILEO NETO = "M:\kn815lw\I95_XLTOD\CubeModel\Input\Phase2_3.NET"
+
+ENDRUN

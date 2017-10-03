@@ -1,0 +1,18 @@
+;;<<Default Template>><<MATRIX>><<Default>>;;
+; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
+RUN PGM=MATRIX
+FILEO PRINTO[1] = "{SCENARIO_DIR}\REV@HR@.CSV"
+FILEI MATI[1] = "{SCENARIO_DIR}\REV@HR@.MAT"
+
+MW[1] = MI.1.3
+MW[2] = MI.1.6
+
+_ROWSUM_SOV = _ROWSUM_SOV + ROWSUM(1)
+_ROWSUM_HOV = _ROWSUM_HOV + ROWSUM(2)
+
+IF(I=ZONES)
+  PRINT CSV=T, LIST='TIMEPERIOD'(10R),'SOV'(10R),'HOV'(10R),PRINTO=1
+  PRINT CSV=T, LIST=@HR@(10),_ROWSUM_SOV(10.2),_ROWSUM_HOV(10.2),PRINTO=1
+ENDIF
+
+ENDRUN

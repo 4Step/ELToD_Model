@@ -50,3 +50,24 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# CUBE files
+*.GDS
+*.DAT
+*.BAK
+*.VAR
+*.PRN
+*.TPPL
+*.log
+*.TRF
+*ELTODB[0-9][0-9].script.command
+*ELTODB[0-9][0-9].script.cmdstart
+*ELTODB[0-9][0-9].script.end
+*ELTODB[0-9][0-9].script.VAR
+*ELTODB[0-9][0-9].script.message
+*ELTODB[0-9].script.command
+*ELTODB[0-9].script.cmdstart
+*ELTODB[0-9].script.end
+*ELTODB[0-9].script.VAR
+*ELTODB[0-9].script.message
+*tempfile.*

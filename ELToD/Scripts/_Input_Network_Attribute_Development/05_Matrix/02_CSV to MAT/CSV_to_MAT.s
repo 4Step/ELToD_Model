@@ -1,0 +1,12 @@
+
+RUN PGM=MATRIX
+FILEI MATI[1] = "OutputAdj.csv",
+  PATTERN=IJ:V, FIELDS=#1,0,2-10
+FILEO MATO[1] = "Output_ADJ.MAT",
+  MO=1 NAME=MI
+  
+zones=9  
+
+MW[1]=MI.1.1
+
+ENDRUN

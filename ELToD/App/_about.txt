@@ -1,0 +1,5 @@
+2017-0501
+Output loaded net script files edited to change the PM peak from 16-18 to 17-19.
+This change affected 3 script files now labeled xx_old.S to indicate these are the originals.
+This is useful if the PM peak period of 16-18 is required in the future.
+The newly redefined period scripts overwrote the previous. 

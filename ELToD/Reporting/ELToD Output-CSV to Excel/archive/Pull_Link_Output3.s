@@ -1,0 +1,485 @@
+
+; Change the Nodes, Segment #, and Scenario Manually
+
+SEG   = '22-W of Waterways'        ; Segment #
+SCEN  = 'SW10th'   ; Scenario
+
+XLNBA = '2310'      ; SOV NB/EB Express Lane A Node
+XLNBB = '2312'      ; SOV NB/EB Express Lane B Node
+XLSBA = '2311'      ; SOV SB/WB Express Lane A Node
+XLSBB = '1428'      ; SOV SB/WB Express Lane B Node
+GUNBA = '1548'      ; SOV NB/EB General Use Lane A Node
+GUNBB = '2297'      ; SOV NB/EB General Use Lane B Node
+GUSBA = '2298'      ; SOV SB/WB General Use Lane A Node
+GUSBB = '1549'      ; SOV SB/WB General Use Lane B Node
+
+
+RUN PGM=NETWORK 
+
+FILEO PRINTO[1] = "Output3.csv"
+FILEI LINKI[1] = "LOADED_DY.NET"
+
+IF (LI.1.A=@GUNBA@ && LI.1.B=@GUNBB@)
+    ;SOV NB GU
+  
+   _1SEG_NB_GU_9=V_HR9_SOV
+   _1SEG_NB_GU_18=V_HR18_SOV
+   _1TOT_NB_GU=DY_SOV
+
+ ENDIF
+   
+ IF (LI.1.A=@GUSBA@ && LI.1.B=@GUSBB@)
+   ;SOV SB GU
+    
+    _1SEG_SB_GU_9=V_HR9_SOV
+    _1SEG_SB_GU_18=V_HR18_SOV
+    _1TOT_SB_GU=DY_SOV
+
+ ENDIF
+  
+ IF (LI.1.A=@XLNBA@ && LI.1.B=@XLNBB@)
+ 
+   ;SOV NB XL
+    
+    _1SEG_NB_XL_9=V_HR9_SOV
+    _1SEG_NB_XL_18=V_HR18_SOV
+    _1TOT_NB_XL=DY_SOV
+      
+  ENDIF
+  
+  IF (LI.1.A=@XLSBA@ && LI.1.B=@XLSBB@)
+  
+  ;SOV SB XL named = output attribute
+    
+    _1SEG_SB_XL_9=V_HR9_SOV
+    _1SEG_SB_XL_18=V_HR18_SOV
+    _1TOT_SB_XL=DY_SOV
+    
+  ENDIF
+
+  ;Totals
+    _TOTAL_GU_CORRIDOR=_1TOT_NB_GU+_1TOT_SB_GU
+    _TOTAL_XL_CORRIDOR=_1TOT_NB_XL+_1TOT_SB_XL
+    _TOTAL_CORRIDOR=_1TOT_NB_GU+_1TOT_SB_GU+_1TOT_NB_XL+_1TOT_SB_XL
+
+  ;Corridor Total
+    
+    _CORR_TOT_9= _1SEG_NB_GU_9+_1SEG_SB_GU_9+_1SEG_NB_XL_9+_1SEG_SB_XL_9
+    _CORR_TOT_18= _1SEG_NB_GU_18+_1SEG_SB_GU_18+_1SEG_NB_XL_18+_1SEG_SB_XL_18  
+  
+   
+PROCESS PHASE=SUMMARY
+
+   PRINT CSV=T, LIST='SEGMENT: @SEG@','','SCENARIO:  @SCEN@',"\n",PRINTO=1 
+   
+   
+   PRINT CSV=T, LIST='HR','LANE VOLUME','LANE VOLUME','LANE VOLUME','LANE VOLUME','LANE VOLUME','LANE VOLUME',PRINTO=1
+   
+   
+   PRINT CSV=T,LIST='FACILITY','GU','GU','XL','XL','FR','FR','CORRIDOR',PRINTO=1
+
+   
+   PRINT CSV=T, LIST='DIRECTION','NB/EB','SB/WB','NB/EB','SB/WB','NB/EB','SB/WB','TOTAL',PRINTO=1
+   
+   PRINT CSV=T, FORM=7.0, LIST='  9:   ',_1SEG_NB_GU_9,_1SEG_SB_GU_9,_1SEG_NB_XL_9,_1SEG_SB_XL_9,'' ,'' , _CORR_TOT_9,  PRINTO=1
+   
+   PRINT CSV=T, FORM=7.0, LIST=' 18:   ',_1SEG_NB_GU_18,_1SEG_SB_GU_18,_1SEG_NB_XL_18,_1SEG_SB_XL_18,'' ,'' , _CORR_TOT_18,  PRINTO=1
+   
+   PRINT CSV=T, FORM=7.0, LIST='TOTAL:',_1TOT_NB_GU,_1TOT_SB_GU,_1TOT_NB_XL,_1TOT_SB_XL,'' ,'' ,_TOTAL_CORRIDOR,"\n",PRINTO=1
+   
+   PRINT CSV=T, FORM=8, LIST='TOTAL GU CORRIDOR:',_TOTAL_GU_CORRIDOR,PRINTO=1
+   PRINT CSV=T, FORM=8, LIST='TOTAL XL CORRIDOR:',_TOTAL_XL_CORRIDOR,PRINTO=1
+   PRINT CSV=T, FORM=8, LIST='TOTAL CORRIDOR:',_TOTAL_CORRIDOR,"\n",PRINTO=1
+/*   
+   PRINT CSV=T, FORM=8, LIST='PULL LINK',PRINTO=1
+   PRINT CSV=T, FORM=8, LIST='XL NB A NODE:',@XLNBA@,PRINTO=1
+   PRINT CSV=T, FORM=8, LIST='XL NB B NODE:',@XLNBB@,PRINTO=1
+   PRINT CSV=T, FORM=8, LIST='XL SB A NODE:',@XLSBA@,PRINTO=1
+   PRINT CSV=T, FORM=8, LIST='XL SB B NODE:',@XLSBB@,PRINTO=1
+   PRINT CSV=T, FORM=8, LIST='GU NB A NODE:',@GUNBA@,PRINTO=1
+   PRINT CSV=T, FORM=8, LIST='GU NB B NODE:',@GUNBB@,PRINTO=1
+   PRINT CSV=T, FORM=8, LIST='GU SB A NODE:',@GUSBA@,PRINTO=1
+   PRINT CSV=T, FORM=8, LIST='GU SB B NODE:',@GUSBB@,PRINTO=1
+*/   
+ENDPROCESS
+
+
+ENDRUN
+
+SEG   = '23-W. of Southern Coin'        ; Segment #
+SCEN  = 'SW10th'   ; Scenario
+
+XLNBA = '1534'      ; SOV NB/EB Express Lane A Node
+XLNBB = '1536'      ; SOV NB/EB Express Lane B Node
+XLSBA = '1537'      ; SOV SB/WB Express Lane A Node
+XLSBB = '1535'      ; SOV SB/WB Express Lane B Node
+GUNBA = '1363'      ; SOV NB/EB General Use Lane A Node
+GUNBB = '1362'      ; SOV NB/EB General Use Lane B Node
+GUSBA = '1359'      ; SOV SB/WB General Use Lane A Node
+GUSBB = '1360'      ; SOV SB/WB General Use Lane B Node
+FRNBA = '1388'      ; SOV NB/EB Frontage Lane A Node
+FRNBB = '1555'      ; SOV NB/EB Frontage Lane B Node
+FRSBA = '1556'      ; SOV SB/WB Frontage Lane A Node
+FRSBB = '1340'      ; SOV SB/WB Frontage Lane B Node
+
+
+RUN PGM=NETWORK 
+
+FILEO PRINTO[1] = "Output3.csv",
+  APPEND=T
+FILEI LINKI[1] = "LOADED_DY.NET"
+
+IF (LI.1.A=@GUNBA@ && LI.1.B=@GUNBB@)
+    ;SOV NB GU
+  
+   _1SEG_NB_GU_9=V_HR9_SOV
+   _1SEG_NB_GU_18=V_HR18_SOV
+   _1TOT_NB_GU=DY_SOV
+
+ ENDIF
+   
+ IF (LI.1.A=@GUSBA@ && LI.1.B=@GUSBB@)
+   ;SOV SB GU
+    
+    _1SEG_SB_GU_9=V_HR9_SOV
+    _1SEG_SB_GU_18=V_HR18_SOV
+    _1TOT_SB_GU=DY_SOV
+
+ ENDIF
+  
+ IF (LI.1.A=@XLNBA@ && LI.1.B=@XLNBB@)
+ 
+   ;SOV NB XL
+    
+    _1SEG_NB_XL_9=V_HR9_SOV
+    _1SEG_NB_XL_18=V_HR18_SOV
+    _1TOT_NB_XL=DY_SOV
+      
+  ENDIF
+  
+  IF (LI.1.A=@XLSBA@ && LI.1.B=@XLSBB@)
+  
+  ;SOV SB XL named = output attribute
+    
+    _1SEG_SB_XL_9=V_HR9_SOV
+    _1SEG_SB_XL_18=V_HR18_SOV
+    _1TOT_SB_XL=DY_SOV
+    
+  ENDIF
+
+  IF (LI.1.A=@FRNBA@ && LI.1.B=@FRNBB@)
+  
+  ;SOV NB FR named = output attribute
+    
+    _1SEG_NB_FR_9=V_HR9_SOV
+    _1SEG_NB_FR_18=V_HR18_SOV
+    _1TOT_NB_FR=DY_SOV
+    
+  ENDIF
+  IF (LI.1.A=@FRSBA@ && LI.1.B=@FRSBB@)
+  
+  ;SOV SB FR named = output attribute
+    
+    _1SEG_SB_FR_9=V_HR9_SOV
+    _1SEG_SB_FR_18=V_HR18_SOV
+    _1TOT_SB_FR=DY_SOV
+    
+  ENDIF
+  
+  ;Totals
+    _TOTAL_GU_CORRIDOR=_1TOT_NB_GU+_1TOT_SB_GU
+    _TOTAL_XL_CORRIDOR=_1TOT_NB_XL+_1TOT_SB_XL
+    _TOTAL_FR_CORRIDOR=_1TOT_NB_FR+_1TOT_SB_FR
+    _TOTAL_CORRIDOR=_1TOT_NB_GU+_1TOT_SB_GU+_1TOT_NB_XL+_1TOT_SB_XL+_1TOT_NB_FR+_1TOT_SB_FR
+
+  ;Corridor Total
+    
+    _CORR_TOT_9= _1SEG_NB_GU_9+_1SEG_SB_GU_9+_1SEG_NB_XL_9+_1SEG_SB_XL_9+_1SEG_NB_FR_9+_1SEG_SB_FR_9
+    _CORR_TOT_18= _1SEG_NB_GU_18+_1SEG_SB_GU_18+_1SEG_NB_XL_18+_1SEG_SB_XL_18+_1SEG_NB_FR_18+_1SEG_SB_FR_18
+  
+   
+PROCESS PHASE=SUMMARY
+
+   PRINT CSV=T, LIST='SEGMENT: @SEG@','','SCENARIO:  @SCEN@',"\n",PRINTO=1 
+   
+   
+   PRINT CSV=T, LIST='HR','LANE VOLUME','LANE VOLUME','LANE VOLUME','LANE VOLUME','LANE VOLUME','LANE VOLUME',PRINTO=1
+   
+   
+   PRINT CSV=T,LIST='FACILITY','GU','GU','XL','XL','FR','FR','CORRIDOR',PRINTO=1
+
+   
+   PRINT CSV=T, LIST='DIRECTION','NB/EB','SB/WB','NB/EB','SB/WB','NB/EB','SB/WB','TOTAL',PRINTO=1
+   
+   PRINT CSV=T, FORM=7.0, LIST='  9:   ',_1SEG_NB_GU_9,_1SEG_SB_GU_9,_1SEG_NB_XL_9,_1SEG_SB_XL_9,_1SEG_NB_FR_9,_1SEG_SB_FR_9, _CORR_TOT_9,  PRINTO=1
+   
+   PRINT CSV=T, FORM=7.0, LIST=' 18:   ',_1SEG_NB_GU_18,_1SEG_SB_GU_18,_1SEG_NB_XL_18,_1SEG_SB_XL_18,_1SEG_NB_FR_18,_1SEG_SB_FR_18, _CORR_TOT_18,  PRINTO=1
+   
+   PRINT CSV=T, FORM=7.0, LIST='TOTAL:',_1TOT_NB_GU,_1TOT_SB_GU,_1TOT_NB_XL,_1TOT_SB_XL,_1TOT_NB_FR,_1TOT_SB_FR,_TOTAL_CORRIDOR,"\n",PRINTO=1
+   
+   PRINT CSV=T, FORM=8, LIST='TOTAL GU CORRIDOR:',_TOTAL_GU_CORRIDOR,PRINTO=1
+   PRINT CSV=T, FORM=8, LIST='TOTAL XL CORRIDOR:',_TOTAL_XL_CORRIDOR,PRINTO=1
+   PRINT CSV=T, FORM=8, LIST='TOTAL FR CORRIDOR:',_TOTAL_FR_CORRIDOR,PRINTO=1
+   PRINT CSV=T, FORM=8, LIST='TOTAL CORRIDOR:',_TOTAL_CORRIDOR,"\n",PRINTO=1
+
+ENDPROCESS
+
+
+ENDRUN
+
+SEG   = '24-Just N. of Sawgrass'        ; Segment #
+SCEN  = 'SW10th'   ; Scenario
+
+XLNBA = '1651'      ; SOV NB/EB Express Lane A Node
+XLNBB = '1647'      ; SOV NB/EB Express Lane B Node
+XLSBA = '1648'      ; SOV SB/WB Express Lane A Node
+XLSBB = '1649'      ; SOV SB/WB Express Lane B Node
+GUNBA = '1413'      ; SOV NB/EB General Use Lane A Node
+GUNBB = '1411'      ; SOV NB/EB General Use Lane B Node
+GUSBA = '1410'      ; SOV SB/WB General Use Lane A Node
+GUSBB = '1412'      ; SOV SB/WB General Use Lane B Node
+/*FRNBA = '1388'      ; SOV NB/EB Frontage Lane A Node
+FRNBB = '1555'      ; SOV NB/EB Frontage Lane B Node
+FRSBA = '1556'      ; SOV SB/WB Frontage Lane A Node
+FRSBB = '1340'      ; SOV SB/WB Frontage Lane B Node
+*/
+
+RUN PGM=NETWORK 
+
+FILEO PRINTO[1] = "Output3.csv",
+  APPEND=T
+FILEI LINKI[1] = "LOADED_DY.NET"
+
+IF (LI.1.A=@GUNBA@ && LI.1.B=@GUNBB@)
+    ;SOV NB GU
+  
+   _1SEG_NB_GU_9=V_HR9_SOV
+   _1SEG_NB_GU_18=V_HR18_SOV
+   _1TOT_NB_GU=DY_SOV
+
+ ENDIF
+   
+ IF (LI.1.A=@GUSBA@ && LI.1.B=@GUSBB@)
+   ;SOV SB GU
+    
+    _1SEG_SB_GU_9=V_HR9_SOV
+    _1SEG_SB_GU_18=V_HR18_SOV
+    _1TOT_SB_GU=DY_SOV
+
+ ENDIF
+  
+ IF (LI.1.A=@XLNBA@ && LI.1.B=@XLNBB@)
+ 
+   ;SOV NB XL
+    
+    _1SEG_NB_XL_9=V_HR9_SOV
+    _1SEG_NB_XL_18=V_HR18_SOV
+    _1TOT_NB_XL=DY_SOV
+      
+  ENDIF
+  
+  IF (LI.1.A=@XLSBA@ && LI.1.B=@XLSBB@)
+  
+  ;SOV SB XL named = output attribute
+    
+    _1SEG_SB_XL_9=V_HR9_SOV
+    _1SEG_SB_XL_18=V_HR18_SOV
+    _1TOT_SB_XL=DY_SOV
+    
+  ENDIF
+/*
+  IF (LI.1.A=@FRNBA@ && LI.1.B=@FRNBB@)
+  
+  ;SOV NB FR named = output attribute
+    
+    _1SEG_NB_FR_9=V_HR9_SOV
+    _1SEG_NB_FR_18=V_HR18_SOV
+    _1TOT_NB_FR=DY_SOV
+    
+  ENDIF
+  IF (LI.1.A=@FRSBA@ && LI.1.B=@FRSBB@)
+  
+  ;SOV SB FR named = output attribute
+    
+    _1SEG_SB_FR_9=V_HR9_SOV
+    _1SEG_SB_FR_18=V_HR18_SOV
+    _1TOT_SB_FR=DY_SOV
+    
+  ENDIF
+  */
+  ;Totals
+    _TOTAL_GU_CORRIDOR=_1TOT_NB_GU+_1TOT_SB_GU
+    _TOTAL_XL_CORRIDOR=_1TOT_NB_XL+_1TOT_SB_XL
+;    _TOTAL_FR_CORRIDOR=_1TOT_NB_FR+_1TOT_SB_FR
+    _TOTAL_CORRIDOR=_1TOT_NB_GU+_1TOT_SB_GU+_1TOT_NB_XL+_1TOT_SB_XL;+_1TOT_NB_FR+_1TOT_SB_FR
+
+  ;Corridor Total
+    
+    _CORR_TOT_9= _1SEG_NB_GU_9+_1SEG_SB_GU_9+_1SEG_NB_XL_9+_1SEG_SB_XL_9;+_1SEG_NB_FR_9+_1SEG_SB_FR_9
+    _CORR_TOT_18= _1SEG_NB_GU_18+_1SEG_SB_GU_18+_1SEG_NB_XL_18+_1SEG_SB_XL_18;+_1SEG_NB_FR_18+_1SEG_SB_FR_18
+  
+   
+PROCESS PHASE=SUMMARY
+
+   PRINT CSV=T, LIST='SEGMENT: @SEG@','','SCENARIO:  @SCEN@',"\n",PRINTO=1 
+   
+   
+    PRINT CSV=T, LIST='HR','LANE VOLUME','LANE VOLUME','LANE VOLUME','LANE VOLUME','LANE VOLUME','LANE VOLUME',PRINTO=1
+   
+   
+   PRINT CSV=T,LIST='FACILITY','GU','GU','XL','XL','FR','FR','CORRIDOR',PRINTO=1
+
+   
+   PRINT CSV=T, LIST='DIRECTION','NB/EB','SB/WB','NB/EB','SB/WB','NB/EB','SB/WB','TOTAL',PRINTO=1
+   
+   PRINT CSV=T, FORM=7.0, LIST='  9:   ',_1SEG_NB_GU_9,_1SEG_SB_GU_9,_1SEG_NB_XL_9,_1SEG_SB_XL_9,'' ,'' , _CORR_TOT_9,  PRINTO=1
+   
+   PRINT CSV=T, FORM=7.0, LIST=' 18:   ',_1SEG_NB_GU_18,_1SEG_SB_GU_18,_1SEG_NB_XL_18,_1SEG_SB_XL_18,'' ,'' , _CORR_TOT_18,  PRINTO=1
+   
+   PRINT CSV=T, FORM=7.0, LIST='TOTAL:',_1TOT_NB_GU,_1TOT_SB_GU,_1TOT_NB_XL,_1TOT_SB_XL,'' ,'' ,_TOTAL_CORRIDOR,"\n",PRINTO=1
+   
+   PRINT CSV=T, FORM=8, LIST='TOTAL GU CORRIDOR:',_TOTAL_GU_CORRIDOR,PRINTO=1
+   PRINT CSV=T, FORM=8, LIST='TOTAL XL CORRIDOR:',_TOTAL_XL_CORRIDOR,PRINTO=1
+;   PRINT CSV=T, FORM=8, LIST='TOTAL FR CORRIDOR:',_TOTAL_FR_CORRIDOR,PRINTO=1
+   PRINT CSV=T, FORM=8, LIST='TOTAL CORRIDOR:',_TOTAL_CORRIDOR,"\n",PRINTO=1
+
+ENDPROCESS
+
+
+ENDRUN
+
+SEG   = '25-Just S. of Sawgrass'        ; Segment #
+SCEN  = 'SW10th'   ; Scenario
+
+XLNBA = '1659'      ; SOV NB/EB Express Lane A Node
+XLNBB = '1657'      ; SOV NB/EB Express Lane B Node
+XLSBA = '1654'      ; SOV SB/WB Express Lane A Node
+XLSBB = '1658'      ; SOV SB/WB Express Lane B Node
+GUNBA = '1417'      ; SOV NB/EB General Use Lane A Node
+GUNBB = '1426'      ; SOV NB/EB General Use Lane B Node
+GUSBA = '1427'      ; SOV SB/WB General Use Lane A Node
+GUSBB = '1416'      ; SOV SB/WB General Use Lane B Node
+/*FRNBA = '1388'      ; SOV NB/EB Frontage Lane A Node
+FRNBB = '1555'      ; SOV NB/EB Frontage Lane B Node
+FRSBA = '1556'      ; SOV SB/WB Frontage Lane A Node
+FRSBB = '1340'      ; SOV SB/WB Frontage Lane B Node
+*/
+
+RUN PGM=NETWORK 
+
+FILEO PRINTO[1] = "Output3.csv",
+  APPEND=T
+FILEI LINKI[1] = "LOADED_DY.NET"
+
+IF (LI.1.A=@GUNBA@ && LI.1.B=@GUNBB@)
+    ;SOV NB GU
+  
+   _1SEG_NB_GU_9=V_HR9_SOV
+   _1SEG_NB_GU_18=V_HR18_SOV
+   _1TOT_NB_GU=DY_SOV
+
+ ENDIF
+   
+ IF (LI.1.A=@GUSBA@ && LI.1.B=@GUSBB@)
+   ;SOV SB GU
+    
+    _1SEG_SB_GU_9=V_HR9_SOV
+    _1SEG_SB_GU_18=V_HR18_SOV
+    _1TOT_SB_GU=DY_SOV
+
+ ENDIF
+  
+ IF (LI.1.A=@XLNBA@ && LI.1.B=@XLNBB@)
+ 
+   ;SOV NB XL
+    
+    _1SEG_NB_XL_9=V_HR9_SOV
+    _1SEG_NB_XL_18=V_HR18_SOV
+    _1TOT_NB_XL=DY_SOV
+      
+  ENDIF
+  
+  IF (LI.1.A=@XLSBA@ && LI.1.B=@XLSBB@)
+  
+  ;SOV SB XL named = output attribute
+    
+    _1SEG_SB_XL_9=V_HR9_SOV
+    _1SEG_SB_XL_18=V_HR18_SOV
+    _1TOT_SB_XL=DY_SOV
+    
+  ENDIF
+/*
+  IF (LI.1.A=@FRNBA@ && LI.1.B=@FRNBB@)
+  
+  ;SOV NB FR named = output attribute
+    
+    _1SEG_NB_FR_9=V_HR9_SOV
+    _1SEG_NB_FR_18=V_HR18_SOV
+    _1TOT_NB_FR=DY_SOV
+    
+  ENDIF
+  IF (LI.1.A=@FRSBA@ && LI.1.B=@FRSBB@)
+  
+  ;SOV SB FR named = output attribute
+    
+    _1SEG_SB_FR_9=V_HR9_SOV
+    _1SEG_SB_FR_18=V_HR18_SOV
+    _1TOT_SB_FR=DY_SOV
+    
+  ENDIF
+  */
+  ;Totals
+    _TOTAL_GU_CORRIDOR=_1TOT_NB_GU+_1TOT_SB_GU
+    _TOTAL_XL_CORRIDOR=_1TOT_NB_XL+_1TOT_SB_XL
+;    _TOTAL_FR_CORRIDOR=_1TOT_NB_FR+_1TOT_SB_FR
+    _TOTAL_CORRIDOR=_1TOT_NB_GU+_1TOT_SB_GU+_1TOT_NB_XL+_1TOT_SB_XL;+_1TOT_NB_FR+_1TOT_SB_FR
+
+  ;Corridor Total
+    
+    _CORR_TOT_9= _1SEG_NB_GU_9+_1SEG_SB_GU_9+_1SEG_NB_XL_9+_1SEG_SB_XL_9;+_1SEG_NB_FR_9+_1SEG_SB_FR_9
+    _CORR_TOT_18= _1SEG_NB_GU_18+_1SEG_SB_GU_18+_1SEG_NB_XL_18+_1SEG_SB_XL_18;+_1SEG_NB_FR_18+_1SEG_SB_FR_18
+  
+   
+PROCESS PHASE=SUMMARY
+
+   PRINT CSV=T, LIST='SEGMENT: @SEG@','','SCENARIO:  @SCEN@',"\n",PRINTO=1 
+   
+   
+    PRINT CSV=T, LIST='HR','LANE VOLUME','LANE VOLUME','LANE VOLUME','LANE VOLUME','LANE VOLUME','LANE VOLUME',PRINTO=1
+   
+   
+   PRINT CSV=T,LIST='FACILITY','GU','GU','XL','XL','FR','FR','CORRIDOR',PRINTO=1
+
+   
+   PRINT CSV=T, LIST='DIRECTION','NB/EB','SB/WB','NB/EB','SB/WB','NB/EB','SB/WB','TOTAL',PRINTO=1
+   
+   PRINT CSV=T, FORM=7.0, LIST='  9:   ',_1SEG_NB_GU_9,_1SEG_SB_GU_9,_1SEG_NB_XL_9,_1SEG_SB_XL_9,'' ,'' , _CORR_TOT_9,  PRINTO=1
+   
+   PRINT CSV=T, FORM=7.0, LIST=' 18:   ',_1SEG_NB_GU_18,_1SEG_SB_GU_18,_1SEG_NB_XL_18,_1SEG_SB_XL_18,'' ,'' , _CORR_TOT_18,  PRINTO=1
+   
+   PRINT CSV=T, FORM=7.0, LIST='TOTAL:',_1TOT_NB_GU,_1TOT_SB_GU,_1TOT_NB_XL,_1TOT_SB_XL,'' ,'' ,_TOTAL_CORRIDOR,"\n",PRINTO=1
+   
+   PRINT CSV=T, FORM=8, LIST='TOTAL GU CORRIDOR:',_TOTAL_GU_CORRIDOR,PRINTO=1
+   PRINT CSV=T, FORM=8, LIST='TOTAL XL CORRIDOR:',_TOTAL_XL_CORRIDOR,PRINTO=1
+;   PRINT CSV=T, FORM=8, LIST='TOTAL FR CORRIDOR:',_TOTAL_FR_CORRIDOR,PRINTO=1
+   PRINT CSV=T, FORM=8, LIST='TOTAL CORRIDOR:',_TOTAL_CORRIDOR,"\n",PRINTO=1
+
+ENDPROCESS
+
+
+ENDRUN
+/*
+SEG   = 'xx-description'        ; Segment #
+SCEN  = 'SW10th'   ; Scenario
+
+XLNBA = '2310'      ; SOV NB/EB Express Lane A Node
+XLNBB = '2312'      ; SOV NB/EB Express Lane B Node
+XLSBA = '2311'      ; SOV SB/WB Express Lane A Node
+XLSBB = '1428'      ; SOV SB/WB Express Lane B Node
+GUNBA = '1548'      ; SOV NB/EB General Use Lane A Node
+GUNBB = '2297'      ; SOV NB/EB General Use Lane B Node
+GUSBA = '2298'      ; SOV SB/WB General Use Lane A Node
+GUSBB = '1549'      ; SOV SB/WB General Use Lane B Node
+
+
+RUN PGM=NETWORK 

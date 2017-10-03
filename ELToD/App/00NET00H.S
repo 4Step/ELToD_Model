@@ -1,0 +1,51 @@
+;;<<Default Template>><<NETWORK>><<Default>>;;
+; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
+RUN PGM=NETWORK MSG='Set Input Attributes'
+FILEI GEOMI[1] = "M:\KN815JK\FDOT DISTRICT 4\I-95 EXPRESS LANES 2013\GIS\I-95_NET_2013-0726\LINKS.SHP"
+FILEI NODEI[1] = "M:\KN815JK\FDOT DISTRICT 4\I-95 EXPRESS LANES 2013\GIS\I-95_NET_2013-0726\NODES.DBF"
+FILEI LINKI[1] = "{Network}"
+FILEI LINKI[2] = "{Toll Section Length File}",
+ VAR=A,B,TOLLSEGLENGTH,SEGNUM,DIRECTION
+FILEO NETO = "{SCENARIO_DIR}\Assign_Input_Net.NET"
+ZONES = {Number of Zones}
+
+MERGE RECORD=TRUE
+
+;Toll links
+IF (LI.1.FTC2_ORG=81)
+  SECTIONNUM = 1
+ENDIF
+
+IF (LI.1.FTC2_ORG=81)
+  TOLLLINK = 1
+ENDIF
+
+;Free flow speed
+IF (LI.1.POSTSPD_ORG=0)
+  SPEED = 65
+ELSE
+  SPEED = LI.1.POSTSPD_ORG+10
+ENDIF
+
+;Distance
+DISTANCE = LI.1.DISTANCE
+
+;Lanes
+NUM_LANES = LI.1.NUM_LANES
+
+;Type
+FTYPE = LI.1.FTC2_ORG
+
+;Make ML more attractive
+;IF (LI.1.LINKGRP2=91)
+  ;SPEED = 70
+;ENDIF
+
+;Capacity
+CAPACITY=LI.1.CAPACITY
+
+;Pull
+IF (LI.1.PULL='1')
+  PULL = '#'
+ENDIF
+ENDRUN

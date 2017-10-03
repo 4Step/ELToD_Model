@@ -1,0 +1,7 @@
+Originally from the ELToDv3 Analyst application.
+Extracted the AM correlation script out of: Renumber Trip Matrices #5 \ AM Peak Period #1 step. 
+USE:  Correlate.s after editing the COMPRESS.PRN for the correlation of zones between the two matrix designs.
+Then,
+Created a script to factor the daily matrix into three period matrices.
+	make sure to use the correct period factors
+USE:  Matrix_Factor.s after editing the factors appropriately to add up to 1.0 so not to overestimate the periods.

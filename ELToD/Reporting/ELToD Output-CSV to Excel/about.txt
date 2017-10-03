@@ -1,0 +1,6 @@
+The original script is the base for reporting the identified EL project segments in SW10th project. 
+
+the second script was created to address pull locations for HEFT. 
+	
+Currently (as of 12/30) the additional impact locations were provided via the demand model profile.
+the third script (output3) is for the DDHVs pull. iT HAS BEEN MODIFIED TO ONLY OUTPUT VOLUME FOR SELECT HOURS. 
