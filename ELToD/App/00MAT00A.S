@@ -14,8 +14,8 @@ LOOKUP LOOKUPI=1, NAME=GETHRFACTOR, LOOKUP[1]=1, RESULT=2,
                                     LOOKUP[4]=1, RESULT=5,INTERPOLATE=F
                                                                
 MW[1] = MI.1.1 * {Trip Table Factor}   ;SOV
-MW[2] = 0 ;MI.1.2 * {Trip Table Factor}   ;HOV
-MW[3] = 0 ;MI.1.3 * {Trip Table Factor}   ;TRK
+MW[2] = MI.1.2 * {Trip Table Factor}   ;HOV
+MW[3] = MI.1.3 * {Trip Table Factor}   ;TRK
 MW[11] = MI.2.1 ;North SB Dir_1
 MW[12] = MI.2.2 ;North NB Dir_2
 MW[13] = MI.2.3 ;South SB Dir_3
