@@ -137,14 +137,20 @@ PROCESS PHASE=ILOOP
         MW[201] = 0   ;SOV toll charged
         MW[202] = 0   ;Revenue
       ELSE  ;Forced toll path
-      MW[101] = 1/(1+EXP(-1*_TollConstant-{Travel Time Coefficient}*(MW[77]-MW[17])-{Toll Coefficient}*(MW[73]-MW[13])-{Reliability Coefficient}*{Travel Time Coefficient}*{Reliability Time Coefficient}*((MW[15]-MW[11])*MW[12]^(-1*{Reliability Distance Coefficient})-(MW[75]-MW[71])*MW[72]^(-1*{Reliability Distance Coefficient}))+MIN(MAX({Distance Penalty Y}-{Distance Penalty Y}*(MW[76]-{Distance Penalty X1})/({Distance Penalty X2}-{Distance Penalty X1}),0),{Distance Penalty Y})))
+      ;MW[101] = 1/(1+EXP(-1* _TollConstant -{Travel Time Coefficient}*(MW[77]-MW[17])-{Toll Coefficient}*(MW[73]-MW[13])-{Reliability Coefficient}*{Travel Time Coefficient}*{Reliability Time Coefficient}*((MW[15]-MW[11])*MW[12]^(-1*{Reliability Distance Coefficient})-(MW[75]-MW[71])*MW[72]^(-1*{Reliability Distance Coefficient}))+MIN(MAX({Distance Penalty Y}-{Distance Penalty Y}*(MW[76]-{Distance Penalty X1})/({Distance Penalty X2}-{Distance Penalty X1}),0),{Distance Penalty Y})))
+      
+            MW[101] = 1/(1+EXP(-1* -1.19273 -{Travel Time Coefficient}*(MW[77]-MW[17])-{Toll Coefficient}*(MW[73]-MW[13])-{Reliability Coefficient}*{Travel Time Coefficient}*{Reliability Time Coefficient}*((MW[15]-MW[11])*MW[12]^(-1*{Reliability Distance Coefficient})-(MW[75]-MW[71])*MW[72]^(-1*{Reliability Distance Coefficient}))+MIN(MAX({Distance Penalty Y}-{Distance Penalty Y}*(MW[76]-{Distance Penalty X1})/({Distance Penalty X2}-{Distance Penalty X1}),0),{Distance Penalty Y})))
+            
       MW[102] = MW[1] * (1-MW[101])   ;GU trip table
       MW[103] = MW[1] - MW[102]       ;ML trip table
       MW[201] = MW[373]                ;SOV toll charged
       MW[202] = MW[201]*MW[103]       ;Revenue
       ENDIF
     ELSE  ;Time based toll path
-      MW[101] = 1/(1+EXP(-1*_TollConstant-{Travel Time Coefficient}*(MW[27]-MW[17])-{Toll Coefficient}*(MW[23]-MW[13])-{Reliability Coefficient}*{Travel Time Coefficient}*{Reliability Time Coefficient}*((MW[15]-MW[11])*MW[12]^(-1*{Reliability Distance Coefficient})-(MW[25]-MW[21])*MW[22]^(-1*{Reliability Distance Coefficient}))+MIN(MAX({Distance Penalty Y}-{Distance Penalty Y}*(MW[26]-{Distance Penalty X1})/({Distance Penalty X2}-{Distance Penalty X1}),0),{Distance Penalty Y})))  
+      ; MW[101] = 1/(1+EXP(-1*_TollConstant-{Travel Time Coefficient}*(MW[27]-MW[17])-{Toll Coefficient}*(MW[23]-MW[13])-{Reliability Coefficient}*{Travel Time Coefficient}*{Reliability Time Coefficient}*((MW[15]-MW[11])*MW[12]^(-1*{Reliability Distance Coefficient})-(MW[25]-MW[21])*MW[22]^(-1*{Reliability Distance Coefficient}))+MIN(MAX({Distance Penalty Y}-{Distance Penalty Y}*(MW[26]-{Distance Penalty X1})/({Distance Penalty X2}-{Distance Penalty X1}),0),{Distance Penalty Y})))  
+      
+            MW[101] = 1/(1+EXP(-1* -1.19273 -{Travel Time Coefficient}*(MW[27]-MW[17])-{Toll Coefficient}*(MW[23]-MW[13])-{Reliability Coefficient}*{Travel Time Coefficient}*{Reliability Time Coefficient}*((MW[15]-MW[11])*MW[12]^(-1*{Reliability Distance Coefficient})-(MW[25]-MW[21])*MW[22]^(-1*{Reliability Distance Coefficient}))+MIN(MAX({Distance Penalty Y}-{Distance Penalty Y}*(MW[26]-{Distance Penalty X1})/({Distance Penalty X2}-{Distance Penalty X1}),0),{Distance Penalty Y})))  
+            
       MW[102] = MW[1] * (1-MW[101])   ;GU trip table
       MW[104] = MW[1] - MW[102]       ;ML trip table
       MW[201] = MW[323]                ;SOV toll charged
@@ -293,7 +299,15 @@ FUNCTION {
  ;4 piece function: flat 0 for LOSA, linear increase to "min toll" for LOSA/LOSB transition, "min toll" for LOSB, dynamic curve for LOSC and worse
  
   IF (LW.TOLLSEGNUM>0)
-  
+  IF (LI.TOLLPOLICY == 1)
+      ;Toll curve
+      _TollRate = (LW.MINSEGTOLL + ({Max Per Segment Toll}-LW.MINSEGTOLL)*(V/C+{VC Toll Offset})^{Toll Exponent})
+      ;Adjust for max segment toll
+      _TollRate_adj = MIN(_TollRate, {Max Per Segment Toll})
+      ;Adjust for min segment toll 
+      _TollRate_Current = MAX(_TollRate_adj, LW.MINSEGTOLL)
+      
+  ELSE
     IF ((V/C)<{LOS A PriceInc VC})
     
       _TollRate = 0
@@ -301,8 +315,7 @@ FUNCTION {
       _TollRate_Current= 0
     
     ELSEIF ((V/C)<{LOS B VC})
-    
-    
+     
       _TollRate = (((V/C)-{LOS A PriceInc VC})/({LOS B VC}-{LOS A PriceInc VC}))*LW.MINSEGTOLL
       _TollRate_adj = _TollRate
       _TollRate_Current= _TollRate   
@@ -325,16 +338,19 @@ FUNCTION {
       ;Adjust for min segment toll 
       _TollRate_Current = MAX(_TollRate_adj, LW.MINSEGTOLL)
       ENDIF
-          
+ ENDIF         
     LW.TOLL = _TollRate_Current 
-  
+    
+ IF (LI.TOLLPOLICY == 1)
+    LW.TOLL_REV = LW.TOLL
+ ELSE
      ;Adjust toll used for calculating revenue if LOSA conditions or the EL speed was below the policy minimum    
     IF ((V/C) < {LOS B VC} || LW.SPD < {Policy Min EL Speed}) 
       LW.TOLL_REV = 0
     ELSE
       LW.TOLL_REV = LW.TOLL
     ENDIF
-    
+ ENDIF   
         PRINT CSV=T, LIST=ITERATION(5.0),A(5.0),B(5.0),LW.TOLLSEGNUM(10.0),_TollRate(15.2),_TollRate_adj(15.2),_TollRate_Current(15.2),LW.TOLL(15.2),LW.TOLL_REV(15.2),V/C(10.2),{Toll Exponent}(10.2),_MaxCorrection(15.2),PRINTO=2
 
   ENDIF

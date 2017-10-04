@@ -1,4 +1,3 @@
-; Script for program NETWORK in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00NET00P.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='NT'
@@ -17,5 +16,3 @@ NT_TOT = NT_SOV + NT_HOV + NT_TRK
 
 ;NT_TOT_SL = NT1_TOT_SL + NT2_TOT_SL
 ENDRUN
-
-
