@@ -1,6 +1,7 @@
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='Final Daily Loaded Network'
+FILEI LINKI[5] = "{CATALOG_DIR}\Input\2020\Profile_Counts_Dir_Counts.dbf"
 FILEI LINKI[4] = "{SCENARIO_DIR}\LOADED_NT.NET"
 FILEO NETO = "{SCENARIO_DIR}\LOADED_DY.NET",
 EXCLUDE=HRCAP,FFSPD,TOLL,TIME1,TIME2,LINKGRP1,LINKGRP2,LINKGRP3,ASGNGRP,USER,COST,TWOWAY,

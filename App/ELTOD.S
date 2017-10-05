@@ -1,5 +1,5 @@
 Trip_Table=-1
-; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\01NET00B.S"
+; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\01NET00B.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='Network for Assignment'
@@ -88,6 +88,11 @@ ELSE
   CAPACITY = {Capacity per Lane};/10/LI.1.NUM_LANES
 ENDIF
 
+; Manual overwrite
+IF(LI.1.Ftype=96)
+    CAPACITY = 1850 
+ENDIF
+
 ;DIR
 ;IF(LI.5.DIR1=1)
   ;DIR1 = 1
@@ -109,7 +114,7 @@ PRINT CSV=T, LIST=A(10.0L),B(10.0L),{Distance}(10.4L),{Number of Lanes}(5.0L),{F
 ENDRUN
 
 
-; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\01HWY00E.S"
+; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\01HWY00E.S"
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=HIGHWAY MSG='Directional Matrix'
 FILEO MATO[1] = "{SCENARIO_DIR}\Dir.MAT",
@@ -130,7 +135,7 @@ ENDPROCESS
 ENDRUN
 
 
-; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\01NET00D.S"
+; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\01NET00D.S"
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='Toll Link Distance'
 FILEO NETO = "{SCENARIO_DIR}\Assign_Input_Net.NET"
@@ -153,6 +158,8 @@ ELSEIF('{Trip Table Type}'='Hourly')
   Trip_Table = 2
 ELSEIF('{Trip Table Type}'='PK_OP')
   Trip_Table = 3
+ELSEIF('{Trip Table Type}'='ODME')
+  Trip_Table = 4
 ENDIF
 
 
@@ -164,6 +171,8 @@ Elseif (Trip_Table=2)
   goto Trip_Table_2
 Elseif (Trip_Table=3)
   goto Trip_Table_3
+Elseif (Trip_Table=4)
+  goto Trip_Table_4
 Else
   PRINT LIST='Application Error: No Branch Selected from Branch Control "Trip Table"'
   ABORT
@@ -184,7 +193,7 @@ LOOP IterNum = 1, 24, 1
 
 ; End of PILOT Script
 
-; Script for program MATRIX in file "M:\Projects\Veterans ELToDv2.3 2017-0628\App\00MAT00A.S"
+; Script for program MATRIX in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\App\00MAT00A.S"
 ;;<<Default Template>><<MATRIX>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=MATRIX
@@ -283,7 +292,7 @@ goto Trip_Table_END
 *Del "{SCENARIO_DIR}\Log_Trip_Table_Totals.csv"
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\00HWY02B.S"
+; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00HWY02B.S"
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=HIGHWAY
 FILEO MATO[1] = "{SCENARIO_DIR}\Dir2.MAT",
@@ -320,9 +329,9 @@ LOOP HR = 1, 24, 1
 ; PILOT Script
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 
-IF (HR=8-10)
+IF (HR=7-9)
   TP = 'AM'
-ELSEIF (HR=16-18)
+ELSEIF (HR=17-19)
   TP = 'PM'
 ELSE
   TP = 'OP'
@@ -330,7 +339,7 @@ ENDIF
 ;*COPY "{Trip Table}Trip Table *.MAT" "{SCENARIO_DIR}"
 ; End of PILOT Script
 
-; Script for program MATRIX in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\00MAT02C.S"
+; Script for program MATRIX in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00MAT02C.S"
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=MATRIX
 FILEO PRINTO[1] = "{SCENARIO_DIR}\Log_Trip_Table_Totals.csv",
@@ -388,7 +397,7 @@ ENDRUN
 
 ENDLOOP
 
-; Script for program MATRIX in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\00MAT02D.S"
+; Script for program MATRIX in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00MAT02D.S"
 ;;<<Default Template>><<MATRIX>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=MATRIX MSG='Add to AM OD for checking - Part 1 - 4'
@@ -408,7 +417,7 @@ MW[3]= MI.1.3 + MI.2.3 + MI.3.3 ; TRK
 ENDRUN
 
 
-; Script for program MATRIX in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\00MAT02E.S"
+; Script for program MATRIX in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00MAT02E.S"
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=MATRIX MSG='Add to PM OD for checking - Part 2 - 4'
 FILEI MATI[3] = "{SCENARIO_DIR}\Trip Table 19.MAT"
@@ -426,7 +435,7 @@ MW[3]= MI.1.3 + MI.2.3 + MI.3.3 ; TRK
 ENDRUN
 
 
-; Script for program MATRIX in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\00MAT02F.S"
+; Script for program MATRIX in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00MAT02F.S"
 ;;<<Default Template>><<MATRIX>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=MATRIX MSG='Add to OP OD for checking - Part 3 - 4'
@@ -462,10 +471,10 @@ MW[3]= MI.1.3 + MI.2.3 + MI.3.3 + MI.4.3 + MI.5.3 + MI.6.3 + MI.7.3 + MI.8.3 + M
 ENDRUN
 
 
-; Script for program MATRIX in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\00MAT02G.S"
+; Script for program MATRIX in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00MAT02G.S"
 ;;<<Default Template>><<MATRIX>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
-RUN PGM=MATRIX PRNFILE="M:\Projects\Veterans ELToDv2.3 2017-0628\APP\00MAT02A.PRN" MSG='Add to Daily OD for checking - Part 4 - 4'
+RUN PGM=MATRIX PRNFILE="M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00MAT02A.PRN" MSG='Add to Daily OD for checking - Part 4 - 4'
 FILEO MATO[1] = "{SCENARIO_DIR}\Trip Table Daily.MAT",
     MO=1-3,NAME=SOV,HOV,TRK
 FILEI MATI[3] = "{SCENARIO_DIR}\Trip Table OP.MAT"
@@ -480,6 +489,49 @@ MW[3]= MI.1.3 + MI.2.3 + MI.3.3 ; TRK
 
 ENDRUN
 
+
+goto Trip_Table_END
+
+:Trip_Table_4
+; PILOT Script
+; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
+
+*DEL "{SCENARIO_DIR}\Log_Trip Table Totals.csv"
+
+; End of PILOT Script
+
+LOOP IterNum = 1, 24, 1
+
+; PILOT Script
+; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
+
+
+; End of PILOT Script
+
+; Script for program MATRIX in file "M:\PROJECTS\VETERANS ELTODV2.3 2017-0628_PDNE\APP\00MAT02H.S"
+;;<<Default Template>><<MATRIX>><<Default>>;;
+; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
+RUN PGM=MATRIX
+FILEO PRINTO[1] = "{SCENARIO_DIR}\Log_Trip Table Totals.csv",
+  APPEND=T
+FILEI MATI[1] = "{SCENARIO_DIR}\ODME_TripTables\Trip Table @IterNum@.MAT"
+FILEO MATO[1] = "{SCENARIO_DIR}\Trip Table @IterNum@.MAT",
+ MO=1-3,NAME=SOV,HOV,TRK
+                                                               
+MW[1] = MI.1.1 * {Trip Table Factor}   ;SOV
+MW[2] = MI.1.2 * {Trip Table Factor}   ;HOV
+MW[3] = MI.1.3 * {Trip Table Factor}   ;TRK
+
+; Row Total
+_SUM = _SUM + ROWSUM(1) + ROWSUM(1) + ROWSUM (3)
+IF (I={Number of Zones})
+  PRINT CSV=T, LIST=@IterNum@, _SUM, PRINTO=1
+ENDIF
+
+ENDRUN
+
+
+ENDLOOP
 
 goto Trip_Table_END
 
@@ -507,7 +559,7 @@ ELSE
 ENDIF
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\02HWY03A.S"
+; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\02HWY03A.S"
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN" MSG='Highway Assignment'
@@ -913,7 +965,7 @@ ELSE
 ENDIF
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\02HWY03B.S"
+; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\02HWY03B.S"
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN"
@@ -1118,10 +1170,10 @@ PROCESS PHASE=ILOOP
     ;Write log file with details 
     ;SOV
     IF (ITERATION=1 && I=1 && J=1)  ;Write header in detail log file
-      PRINT CSV=T,LIST='ITER'(5L),'I'(5L),'J'(5L),'NTL_FFTime'(10L),'NTL_Time'(10L),'TL_FFTime'(10L),'TL_Time'(10L),'NTL_Pcv_Time'(12L),'TL_Pcv_Time'(12L),'NTL_Dist'(10L),'TL_Dist'(10L),'TL_ONLY_Dist'(12L),'NTL_Toll'(10L),'TL_Toll'(10L),'Share'(10L),'Trip_TOT'(10L),'Trip_NTL'(10L),'Trip_TL'(10L),'Trip_TL_F'(10L),'F_TL_FFTime'(10L),'F_TL_Time'(10L),'F_TL_PcvTime'(12L),'F_TL_Dist'(10L),'F_TL_Toll'(10L),'F_TL_ONLY_Dist'(15L),'Toll_Const'(10L),PRINTO=1
+      PRINT CSV=T,LIST='ITER'(5L),'I'(5L),'J'(5L),'NTL_FFTime'(10L),'NTL_Time'(10L),'TL_FFTime'(10L),'TL_Time'(10L),'NTL_Pcv_Time'(12L),'TL_Pcv_Time'(12L),'NTL_Dist'(10L),'TL_Dist'(10L),'TL_ONLY_Dist'(12L),'NTL_Toll'(10L),'TL_Toll'(10L),'Share'(10L),'Trip_TOT'(10L),'Trip_NTL'(10L),'Trip_TL'(10L),'Trip_TL_F'(10L),'F_TL_FFTime'(10L),'F_TL_Time'(10L),'F_TL_PcvTime'(12L),'F_TL_Dist'(10L),'F_TL_Toll'(10L),'F_TL_ONLY_Dist'(15L),'Toll_Const'(10L),'NTL_CMTime'(10L),'TL_CMTime'(10L), PRINTO=1
     ENDIF
     IF (MW[1]>0)  ;Log only when there are trips between the zone pair
-      PRINT CSV=T,LIST=ITERATION(5.0),I(5.0),J(5.0),MW[15](10.4),MW[11](10.4),MW[25](10.4),MW[21](10.4),MW[14](10.4),MW[24](10.4),MW[12],MW[22],MW[26],MW[13],MW[23],MW[101](15.4),MW[1],MW[102],MW[104],MW[103],MW[75](10.4),MW[71](10.4),MW[74](10.4),MW[72],MW[73],MW[76],_TollConstant,PRINTO=1
+      PRINT CSV=T,LIST=ITERATION(5.0),I(5.0),J(5.0),MW[15](10.4),MW[11](10.4),MW[25](10.4),MW[21](10.4),MW[14](10.4),MW[24](10.4),MW[12],MW[22],MW[26],MW[13],MW[23],MW[101](15.4),MW[1],MW[102],MW[104],MW[103],MW[75](10.4),MW[71](10.4),MW[74](10.4),MW[72],MW[73],MW[76],_TollConstant, MW[17], MW[27],PRINTO=1
     ENDIF
     ;HOV
     IF (ITERATION=1 && I=1 && J=1)  ;Write header in detail log file
@@ -1319,10 +1371,12 @@ ELSE
 ENDIF
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\02HWY03C.S"
+; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\02HWY03C.S"
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN"
+FILEO PRINTO[6] = "{SCENARIO_DIR}\Trace_EL_@HR@.PRN"
+FILEO PRINTO[5] = "{SCENARIO_DIR}\Trace_GL_@HR@.PRN"
 FILEI MATI[2] = "{SCENARIO_DIR}\Dir.MAT"
 FILEO PRINTO[4] = "{SCENARIO_DIR}\VDF@HR@.PRN"
 FILEO PRINTO[3] = "{SCENARIO_DIR}\RUNDETAIL_HOV@HR@.PRN"
@@ -1334,7 +1388,7 @@ FILEO NETO = "{SCENARIO_DIR}\LOADED_HOUR@HR@.NET",
 FILEO MATO[2] = "{SCENARIO_DIR}\REV@HR@.MAT",
 MO=201,105,202,211,115,212, NAME=SOV_TOLL,SOV_VOL,SOV_REV,HOV_TOLL,HOV_VOL,HOV_REV, COMBINE = TRUE
 FILEO MATO[1] = "{SCENARIO_DIR}\SKIM@HR@.MAT",
-MO=101,1,106,2,116, NAME=EL_SHARE_SOV,VOL_SOV,VMT_SOV,VOL_HOV,VMT_HOV, COMBINE = TRUE
+MO=101,1,106,2,116,12, NAME=EL_SHARE_SOV,VOL_SOV,VMT_SOV,VOL_HOV,VMT_HOV, NTL_DIST, COMBINE = TRUE
 FILEI LOOKUPI[1] = "{Hourly Parameters}"
 FILEI NETI = "{SCENARIO_DIR}\Assign_Input_Net.NET"
 FILEI MATI[1] = "{SCENARIO_DIR}\Trip Table @HR@.MAT"
@@ -1414,12 +1468,15 @@ PROCESS PHASE=ILOOP
   
   ;Path building
   ;SOV GU lane path 
-  PATHLOAD PATH=LW.PERCV_TIME, MW[11]=PATHTRACE(LW.CGTIME), NOACCESS=9999, MW[12]=PATHTRACE(LI.DISTANCE), NOACCESS=9999, MW[13]=PATHTRACE(LW.TOLL), NOACCESS=9999, MW[313]=PATHTRACE(LW.TOLL_REV), NOACCESS=9999, MW[14]=PATHTRACE(LW.PERCV_TIME), NOACCESS=9999, MW[15]=PATHTRACE(LW.FFTIME), NOACCESS=9999, MW[17]=PATHTRACE(LW.CM_TIME), NOACCESS=9999, EXCLUDEGROUP=1,2 
+  PATHLOAD PATH=LW.PERCV_TIME, MW[11]=PATHTRACE(LW.CGTIME), NOACCESS=9999, MW[12]=PATHTRACE(LI.DISTANCE), NOACCESS=9999, MW[13]=PATHTRACE(LW.TOLL), NOACCESS=9999, MW[313]=PATHTRACE(LW.TOLL_REV), NOACCESS=9999, MW[14]=PATHTRACE(LW.PERCV_TIME), NOACCESS=9999, MW[15]=PATHTRACE(LW.FFTIME), NOACCESS=9999, MW[17]=PATHTRACE(LW.CM_TIME), NOACCESS=9999, EXCLUDEGROUP=1,2
   ;SOV Toll lane path time based
   PATHLOAD PATH=LW.PERCV_TIME, MW[21]=PATHTRACE(LW.CGTIME), NOACCESS=9999, MW[22]=PATHTRACE(LI.DISTANCE), NOACCESS=9999, MW[23]=PATHTRACE(LW.TOLL), NOACCESS=0, MW[323]=PATHTRACE(LW.TOLL_REV), NOACCESS=0, MW[24]=PATHTRACE(LW.PERCV_TIME), NOACCESS=9999, MW[25]=PATHTRACE(LW.FFTIME), NOACCESS=9999, MW[26]=PATHTRACE(LW.TL_DIST), NOACCESS=9999, MW[27]=PATHTRACE(LW.CM_TIME), NOACCESS=9999, MW[28]=PATHTRACE(LW.TOLLSEGLEN), NOACCESS=9999,EXCLUDEGROUP=2
   ;SOV Toll lane path forced on toll lane
   PATHLOAD PATH=LW.DUMMY_TIME, MW[71]=PATHTRACE(LW.CGTIME), NOACCESS=9999, MW[72]=PATHTRACE(LI.DISTANCE), NOACCESS=9999, MW[73]=PATHTRACE(LW.TOLL), NOACCESS=0, MW[373]=PATHTRACE(LW.TOLL_REV), NOACCESS=0, MW[74]=PATHTRACE(LW.PERCV_TIME), NOACCESS=9999, MW[75]=PATHTRACE(LW.FFTIME), NOACCESS=9999, MW[76]=PATHTRACE(LW.TL_DIST), NOACCESS=9999, MW[77]=PATHTRACE(LW.CM_TIME), NOACCESS=9999, MW[78]=PATHTRACE(LW.CM_TIME), NOACCESS=9999, EXCLUDEGROUP=2 
-             
+    
+   PATHLOAD PATH=LW.PERCV_TIME, MW[998]=PATHTRACE(LW.DISTANCE),  TRACE=(I=34,43 & J=41,33) EXCLUDEGROUP=1,2
+   PATHLOAD PATH=LW.PERCV_TIME, MW[999]=PATHTRACE(LW.DISTANCE),  TRACE=(I=34,43 & J=41,33) EXCLUDEGROUP= 2
+   
   ;HOV GU lane path 
   PATHLOAD PATH=LW.PERCV_TIME, MW[31]=PATHTRACE(LW.CGTIME), NOACCESS=9999, MW[32]=PATHTRACE(LI.DISTANCE), NOACCESS=9999, MW[33]=PATHTRACE(LW.TOLL), NOACCESS=9999, MW[333]=PATHTRACE(LW.TOLL_REV), NOACCESS=9999, MW[34]=PATHTRACE(LW.PERCV_TIME), NOACCESS=9999, MW[35]=PATHTRACE(LW.FFTIME), NOACCESS=9999, MW[37]=PATHTRACE(LW.CM_TIME), NOACCESS=9999, EXCLUDEGROUP=1 
   ;HOV Toll lane path time based
@@ -1524,10 +1581,10 @@ PROCESS PHASE=ILOOP
     ;Write log file with details 
     ;SOV
     IF (ITERATION=1 && I=1 && J=1)  ;Write header in detail log file
-      PRINT CSV=T,LIST='ITER'(5L),'I'(5L),'J'(5L),'NTL_FFTime'(10L),'NTL_Time'(10L),'TL_FFTime'(10L),'TL_Time'(10L),'NTL_Pcv_Time'(12L),'TL_Pcv_Time'(12L),'NTL_Dist'(10L),'TL_Dist'(10L),'TL_ONLY_Dist'(12L),'NTL_Toll'(10L),'TL_Toll'(10L),'Share'(10L),'Trip_TOT'(10L),'Trip_NTL'(10L),'Trip_TL'(10L),'Trip_TL_F'(10L),'F_TL_FFTime'(10L),'F_TL_Time'(10L),'F_TL_PcvTime'(12L),'F_TL_Dist'(10L),'F_TL_Toll'(10L),'F_TL_ONLY_Dist'(15L),'Toll_Const'(10L),PRINTO=1
+      PRINT CSV=T,LIST='ITER'(5L),'I'(5L),'J'(5L),'NTL_FFTime'(10L),'NTL_Time'(10L),'TL_FFTime'(10L),'TL_Time'(10L),'NTL_Pcv_Time'(12L),'TL_Pcv_Time'(12L),'NTL_Dist'(10L),'TL_Dist'(10L),'TL_ONLY_Dist'(12L),'NTL_Toll'(10L),'TL_Toll'(10L),'Share'(10L),'Trip_TOT'(10L),'Trip_NTL'(10L),'Trip_TL'(10L),'Trip_TL_F'(10L),'F_TL_FFTime'(10L),'F_TL_Time'(10L),'F_TL_PcvTime'(12L),'F_TL_Dist'(10L),'F_TL_Toll'(10L),'F_TL_ONLY_Dist'(15L),'Toll_Const'(10L),'NTL_CMTime'(10L),'TL_CMTime'(10L), PRINTO=1
     ENDIF
     IF (MW[1]>0)  ;Log only when there are trips between the zone pair
-      PRINT CSV=T,LIST=ITERATION(5.0),I(5.0),J(5.0),MW[15](10.4),MW[11](10.4),MW[25](10.4),MW[21](10.4),MW[14](10.4),MW[24](10.4),MW[12],MW[22],MW[26],MW[13],MW[23],MW[101](15.4),MW[1],MW[102],MW[104],MW[103],MW[75](10.4),MW[71](10.4),MW[74](10.4),MW[72],MW[73],MW[76],_TollConstant,PRINTO=1
+      PRINT CSV=T,LIST=ITERATION(5.0),I(5.0),J(5.0),MW[15](10.4),MW[11](10.4),MW[25](10.4),MW[21](10.4),MW[14](10.4),MW[24](10.4),MW[12],MW[22],MW[26],MW[13],MW[23],MW[101](15.4),MW[1],MW[102],MW[104],MW[103],MW[75](10.4),MW[71](10.4),MW[74](10.4),MW[72],MW[73],MW[76],_TollConstant, MW[17], MW[27],PRINTO=1
     ENDIF
     ;HOV
     IF (ITERATION=1 && I=1 && J=1)  ;Write header in detail log file
@@ -1569,7 +1626,7 @@ V = VOL[1]+VOL[2]+VOL[3]+VOL[4]+VOL[5]+VOL[6]+VOL[7]+VOL[8]
 
 ;Calculate Congested time
   IF ('{Volume Delay Function}'='Akcelik')
-    LW.CGTIME = T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)
+    LW.CGTIME = LI.DELAY + T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)
   ELSE
     IF ({Override BPR Coefficients in Network}=1)
       ;LW.CGTIME = T0*(1+LI.BPR_Alpha*(V/C)^LI.BPR_Beta)
@@ -1583,7 +1640,7 @@ V = VOL[1]+VOL[2]+VOL[3]+VOL[4]+VOL[5]+VOL[6]+VOL[7]+VOL[8]
 ;Users should update formula if using link-specific BPR coefficients 
 FUNCTION {
 
-    TC[1] = _Akcelik * (T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)) + _BPR * (T0*(1+{BPR Alpha}*(V/C)^{BPR Beta}))
+    TC[1] = _Akcelik * (T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)) + _BPR * (T0*(1+{BPR Alpha}*(V/C)^{BPR Beta})) + LI.DELAY
         
 }
  
@@ -1725,7 +1782,7 @@ ELSE
 ENDIF
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\02HWY03D.S"
+; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\02HWY03D.S"
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN"
@@ -2131,7 +2188,7 @@ ELSE
 ENDIF
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\02HWY03E.S"
+; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\02HWY03E.S"
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN"
@@ -2537,7 +2594,7 @@ ELSE
 ENDIF
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\02HWY03F.S"
+; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\02HWY03F.S"
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN"
@@ -2552,7 +2609,7 @@ FILEO NETO = "{SCENARIO_DIR}\LOADED_HOUR@HR@.NET",
 FILEO MATO[2] = "{SCENARIO_DIR}\REV@HR@.MAT",
 MO=201,105,202,211,115,212, NAME=SOV_TOLL,SOV_VOL,SOV_REV,HOV_TOLL,HOV_VOL,HOV_REV, COMBINE = TRUE
 FILEO MATO[1] = "{SCENARIO_DIR}\SKIM@HR@.MAT",
-MO=101,1,106,2,116, NAME=EL_SHARE_SOV,VOL_SOV,VMT_SOV,VOL_HOV,VMT_HOV, COMBINE = TRUE
+MO=101,1,106,2,116, 12, NAME=EL_SHARE_SOV,VOL_SOV,VMT_SOV,VOL_HOV,VMT_HOV, NTL_DIST, COMBINE = TRUE
 FILEI LOOKUPI[1] = "{Hourly Parameters}"
 FILEI NETI = "{SCENARIO_DIR}\Assign_Input_Net.NET"
 FILEI MATI[1] = "{SCENARIO_DIR}\Trip Table @HR@.MAT"
@@ -2742,10 +2799,10 @@ PROCESS PHASE=ILOOP
     ;Write log file with details 
     ;SOV
     IF (ITERATION=1 && I=1 && J=1)  ;Write header in detail log file
-      PRINT CSV=T,LIST='ITER'(5L),'I'(5L),'J'(5L),'NTL_FFTime'(10L),'NTL_Time'(10L),'TL_FFTime'(10L),'TL_Time'(10L),'NTL_Pcv_Time'(12L),'TL_Pcv_Time'(12L),'NTL_Dist'(10L),'TL_Dist'(10L),'TL_ONLY_Dist'(12L),'NTL_Toll'(10L),'TL_Toll'(10L),'Share'(10L),'Trip_TOT'(10L),'Trip_NTL'(10L),'Trip_TL'(10L),'Trip_TL_F'(10L),'F_TL_FFTime'(10L),'F_TL_Time'(10L),'F_TL_PcvTime'(12L),'F_TL_Dist'(10L),'F_TL_Toll'(10L),'F_TL_ONLY_Dist'(15L),'Toll_Const'(10L),PRINTO=1
+      PRINT CSV=T,LIST='ITER'(5L),'I'(5L),'J'(5L),'NTL_FFTime'(10L),'NTL_Time'(10L),'TL_FFTime'(10L),'TL_Time'(10L),'NTL_Pcv_Time'(12L),'TL_Pcv_Time'(12L),'NTL_Dist'(10L),'TL_Dist'(10L),'TL_ONLY_Dist'(12L),'NTL_Toll'(10L),'TL_Toll'(10L),'Share'(10L),'Trip_TOT'(10L),'Trip_NTL'(10L),'Trip_TL'(10L),'Trip_TL_F'(10L),'F_TL_FFTime'(10L),'F_TL_Time'(10L),'F_TL_PcvTime'(12L),'F_TL_Dist'(10L),'F_TL_Toll'(10L),'F_TL_ONLY_Dist'(15L),'Toll_Const'(10L),'NTL_CMTime'(10L),'TL_CMTime'(10L), PRINTO=1
     ENDIF
     IF (MW[1]>0)  ;Log only when there are trips between the zone pair
-      PRINT CSV=T,LIST=ITERATION(5.0),I(5.0),J(5.0),MW[15](10.4),MW[11](10.4),MW[25](10.4),MW[21](10.4),MW[14](10.4),MW[24](10.4),MW[12],MW[22],MW[26],MW[13],MW[23],MW[101](15.4),MW[1],MW[102],MW[104],MW[103],MW[75](10.4),MW[71](10.4),MW[74](10.4),MW[72],MW[73],MW[76],_TollConstant,PRINTO=1
+      PRINT CSV=T,LIST=ITERATION(5.0),I(5.0),J(5.0),MW[15](10.4),MW[11](10.4),MW[25](10.4),MW[21](10.4),MW[14](10.4),MW[24](10.4),MW[12],MW[22],MW[26],MW[13],MW[23],MW[101](15.4),MW[1],MW[102],MW[104],MW[103],MW[75](10.4),MW[71](10.4),MW[74](10.4),MW[72],MW[73],MW[76],_TollConstant,, MW[17], MW[27],PRINTO=1
     ENDIF
     ;HOV
     IF (ITERATION=1 && I=1 && J=1)  ;Write header in detail log file
@@ -2943,7 +3000,7 @@ ELSE
 ENDIF
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\02HWY03G.S"
+; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\02HWY03G.S"
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN"
@@ -3349,7 +3406,7 @@ ELSE
 ENDIF
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\02HWY03H.S"
+; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\02HWY03H.S"
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN"
@@ -3832,7 +3889,7 @@ PRINT CSV=T, LIST= '  One Express Lane Time Weight'(50L), '{One Express Lane Tim
 
 LOOP HR = 1, 24, 1
 
-; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\01NET00C.S"
+; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\01NET00C.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK
@@ -3857,7 +3914,7 @@ ENDPHASE
 ENDRUN
 
 
-; Script for program MATRIX in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\01MAT00B.S"
+; Script for program MATRIX in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\01MAT00B.S"
 ;;<<Default Template>><<MATRIX>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=MATRIX
@@ -3880,7 +3937,7 @@ ENDRUN
 
 ENDLOOP
 
-; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\00NET00K.S"
+; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00NET00K.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='AM'
@@ -3942,7 +3999,7 @@ TIME_HR10 = LI.3.LW_CGTIME_1
 ENDRUN
 
 
-; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\00NET00L.S"
+; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00NET00L.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='PM'
@@ -4004,7 +4061,7 @@ TIME_HR19 = LI.3.LW_CGTIME_1
 ENDRUN
 
 
-; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\00NET00M.S"
+; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00NET00M.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='MD'
@@ -4098,7 +4155,7 @@ TIME_HR16 = LI.6.LW_CGTIME_1
 ENDRUN
 
 
-; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\00NET00N.S"
+; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00NET00N.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='NT1'
@@ -4184,7 +4241,7 @@ TIME_HR24 = LI.5.LW_CGTIME_1
 ENDRUN
 
 
-; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\00NET00O.S"
+; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00NET00O.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='NT2'
@@ -4290,7 +4347,7 @@ TIME_HR7 = LI.7.LW_CGTIME_1
 ENDRUN
 
 
-; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\00NET00P.S"
+; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00NET00P.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='NT'
@@ -4311,10 +4368,11 @@ NT_TOT = NT_SOV + NT_HOV + NT_TRK
 ENDRUN
 
 
-; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\00NET00Q.S"
+; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00NET00Q.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='Final Daily Loaded Network'
+FILEI LINKI[5] = "{CATALOG_DIR}\Input\2020\Profile_Counts_Dir_Counts.dbf"
 FILEI LINKI[4] = "{SCENARIO_DIR}\LOADED_NT.NET"
 FILEO NETO = "{SCENARIO_DIR}\LOADED_DY.NET",
 EXCLUDE=HRCAP,FFSPD,TOLL,TIME1,TIME2,LINKGRP1,LINKGRP2,LINKGRP3,ASGNGRP,USER,COST,TWOWAY,
@@ -4335,7 +4393,7 @@ DY_TOT = DY_SOV + DY_HOV + DY_TRK
 ENDRUN
 
 
-; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628\APP\01NET00F.S"
+; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\01NET00F.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='Convert Daily Loaded Network to Shape file'

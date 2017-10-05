@@ -86,6 +86,11 @@ ELSE
   CAPACITY = {Capacity per Lane};/10/LI.1.NUM_LANES
 ENDIF
 
+; Manual overwrite
+IF(LI.1.Ftype=96)
+    CAPACITY = 1850 
+ENDIF
+
 ;DIR
 ;IF(LI.5.DIR1=1)
   ;DIR1 = 1
