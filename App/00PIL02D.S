@@ -2,7 +2,7 @@
 
 IF (HR=8-10)
   TP = 'AM'
-ELSEIF (HR=17-19)
+ELSEIF (HR=16-18)
   TP = 'PM'
 ELSE
   TP = 'OP'
