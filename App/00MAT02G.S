@@ -1,6 +1,6 @@
 ;;<<Default Template>><<MATRIX>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
-RUN PGM=MATRIX PRNFILE="M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00MAT02A.PRN" MSG='Add to Daily OD for checking - Part 4 - 4'
+RUN PGM=MATRIX PRNFILE="M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00MAT02A.PRN" MSG='Add to Daily OD for checking - Part 4 - 4'
 FILEO MATO[1] = "{SCENARIO_DIR}\Trip Table Daily.MAT",
     MO=1-3,NAME=SOV,HOV,TRK
 FILEI MATI[3] = "{SCENARIO_DIR}\Trip Table OP.MAT"

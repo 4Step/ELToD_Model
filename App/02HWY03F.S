@@ -12,7 +12,7 @@ FILEO NETO = "{SCENARIO_DIR}\LOADED_HOUR@HR@.NET",
 FILEO MATO[2] = "{SCENARIO_DIR}\REV@HR@.MAT",
 MO=201,105,202,211,115,212, NAME=SOV_TOLL,SOV_VOL,SOV_REV,HOV_TOLL,HOV_VOL,HOV_REV, COMBINE = TRUE
 FILEO MATO[1] = "{SCENARIO_DIR}\SKIM@HR@.MAT",
-MO=101,1,106,2,116, 12, NAME=EL_SHARE_SOV,VOL_SOV,VMT_SOV,VOL_HOV,VMT_HOV, NTL_DIST, COMBINE = TRUE
+MO=101,1,106,2,116, NAME=EL_SHARE_SOV,VOL_SOV,VMT_SOV,VOL_HOV,VMT_HOV, COMBINE = TRUE
 FILEI LOOKUPI[1] = "{Hourly Parameters}"
 FILEI NETI = "{SCENARIO_DIR}\Assign_Input_Net.NET"
 FILEI MATI[1] = "{SCENARIO_DIR}\Trip Table @HR@.MAT"
@@ -202,10 +202,10 @@ PROCESS PHASE=ILOOP
     ;Write log file with details 
     ;SOV
     IF (ITERATION=1 && I=1 && J=1)  ;Write header in detail log file
-      PRINT CSV=T,LIST='ITER'(5L),'I'(5L),'J'(5L),'NTL_FFTime'(10L),'NTL_Time'(10L),'TL_FFTime'(10L),'TL_Time'(10L),'NTL_Pcv_Time'(12L),'TL_Pcv_Time'(12L),'NTL_Dist'(10L),'TL_Dist'(10L),'TL_ONLY_Dist'(12L),'NTL_Toll'(10L),'TL_Toll'(10L),'Share'(10L),'Trip_TOT'(10L),'Trip_NTL'(10L),'Trip_TL'(10L),'Trip_TL_F'(10L),'F_TL_FFTime'(10L),'F_TL_Time'(10L),'F_TL_PcvTime'(12L),'F_TL_Dist'(10L),'F_TL_Toll'(10L),'F_TL_ONLY_Dist'(15L),'Toll_Const'(10L),'NTL_CMTime'(10L),'TL_CMTime'(10L), PRINTO=1
+      PRINT CSV=T,LIST='ITER'(5L),'I'(5L),'J'(5L),'NTL_FFTime'(10L),'NTL_Time'(10L),'TL_FFTime'(10L),'TL_Time'(10L),'NTL_Pcv_Time'(12L),'TL_Pcv_Time'(12L),'NTL_Dist'(10L),'TL_Dist'(10L),'TL_ONLY_Dist'(12L),'NTL_Toll'(10L),'TL_Toll'(10L),'Share'(10L),'Trip_TOT'(10L),'Trip_NTL'(10L),'Trip_TL'(10L),'Trip_TL_F'(10L),'F_TL_FFTime'(10L),'F_TL_Time'(10L),'F_TL_PcvTime'(12L),'F_TL_Dist'(10L),'F_TL_Toll'(10L),'F_TL_ONLY_Dist'(15L),'Toll_Const'(10L),PRINTO=1
     ENDIF
     IF (MW[1]>0)  ;Log only when there are trips between the zone pair
-      PRINT CSV=T,LIST=ITERATION(5.0),I(5.0),J(5.0),MW[15](10.4),MW[11](10.4),MW[25](10.4),MW[21](10.4),MW[14](10.4),MW[24](10.4),MW[12],MW[22],MW[26],MW[13],MW[23],MW[101](15.4),MW[1],MW[102],MW[104],MW[103],MW[75](10.4),MW[71](10.4),MW[74](10.4),MW[72],MW[73],MW[76],_TollConstant,, MW[17], MW[27],PRINTO=1
+      PRINT CSV=T,LIST=ITERATION(5.0),I(5.0),J(5.0),MW[15](10.4),MW[11](10.4),MW[25](10.4),MW[21](10.4),MW[14](10.4),MW[24](10.4),MW[12],MW[22],MW[26],MW[13],MW[23],MW[101](15.4),MW[1],MW[102],MW[104],MW[103],MW[75](10.4),MW[71](10.4),MW[74](10.4),MW[72],MW[73],MW[76],_TollConstant,PRINTO=1
     ENDIF
     ;HOV
     IF (ITERATION=1 && I=1 && J=1)  ;Write header in detail log file
@@ -293,7 +293,15 @@ FUNCTION {
  ;4 piece function: flat 0 for LOSA, linear increase to "min toll" for LOSA/LOSB transition, "min toll" for LOSB, dynamic curve for LOSC and worse
  
   IF (LW.TOLLSEGNUM>0)
-  
+  IF (LI.TOLLPOLICY == 1)
+      ;Toll curve
+      _TollRate = (LW.MINSEGTOLL + ({Max Per Segment Toll}-LW.MINSEGTOLL)*(V/C+{VC Toll Offset})^{Toll Exponent})
+      ;Adjust for max segment toll
+      _TollRate_adj = MIN(_TollRate, {Max Per Segment Toll})
+      ;Adjust for min segment toll 
+      _TollRate_Current = MAX(_TollRate_adj, LW.MINSEGTOLL)
+      
+  ELSE
     IF ((V/C)<{LOS A PriceInc VC})
     
       _TollRate = 0
@@ -301,8 +309,7 @@ FUNCTION {
       _TollRate_Current= 0
     
     ELSEIF ((V/C)<{LOS B VC})
-    
-    
+     
       _TollRate = (((V/C)-{LOS A PriceInc VC})/({LOS B VC}-{LOS A PriceInc VC}))*LW.MINSEGTOLL
       _TollRate_adj = _TollRate
       _TollRate_Current= _TollRate   
@@ -325,16 +332,19 @@ FUNCTION {
       ;Adjust for min segment toll 
       _TollRate_Current = MAX(_TollRate_adj, LW.MINSEGTOLL)
       ENDIF
-          
+ ENDIF         
     LW.TOLL = _TollRate_Current 
-  
+    
+ IF (LI.TOLLPOLICY == 1)
+    LW.TOLL_REV = LW.TOLL
+ ELSE
      ;Adjust toll used for calculating revenue if LOSA conditions or the EL speed was below the policy minimum    
     IF ((V/C) < {LOS B VC} || LW.SPD < {Policy Min EL Speed}) 
       LW.TOLL_REV = 0
     ELSE
       LW.TOLL_REV = LW.TOLL
     ENDIF
-    
+ ENDIF   
         PRINT CSV=T, LIST=ITERATION(5.0),A(5.0),B(5.0),LW.TOLLSEGNUM(10.0),_TollRate(15.2),_TollRate_adj(15.2),_TollRate_Current(15.2),LW.TOLL(15.2),LW.TOLL_REV(15.2),V/C(10.2),{Toll Exponent}(10.2),_MaxCorrection(15.2),PRINTO=2
 
   ENDIF

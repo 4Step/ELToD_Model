@@ -1,8 +1,8 @@
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 
-IF (HR=7-9)
+IF (HR=8-10)
   TP = 'AM'
-ELSEIF (HR=17-19)
+ELSEIF (HR=16-18)
   TP = 'PM'
 ELSE
   TP = 'OP'

@@ -1,5 +1,5 @@
 Trip_Table=-1
-; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\01NET00B.S"
+; Script for program NETWORK in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\01NET00B.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='Network for Assignment'
@@ -11,7 +11,7 @@ VAR=A,B,HRCAP,FFSPD
 FILEI LINKI[3] = "{Express Lane Link File}",
 VAR=A,B,FTYPE
 FILEI LINKI[2] = "{Toll Link File}",
-VAR=A,B,TOLLSEGNUM,TOLLSEGLEN,MINSEGTOLL
+VAR=A,B,TOLLSEGNUM,TOLLSEGLEN,MINSEGTOLL,POLICY
 FILEO NETO = "{SCENARIO_DIR}\Assign_Input_Net_1.NET",
 INCLUDE = TOLLSEGNUM,TOLLSEGLEN,MINSEGTOLL,DISTANCE,SPEED,NUM_LANES,FTYPE,CAPACITY,DIR1,DIR2,DIR3,DIR4
 FILEI LINKI[1] = "{Network}"
@@ -23,7 +23,13 @@ _Cnt=_Cnt+1
 
 IF (_Cnt=1)
   PRINT CSV=T, LIST='A,B,DISTANCE,NUMBER OF LANES,FACILITY TYPE,FREE FLOW SPEED,CAPACITY PER LANE',PRINTO=1
-  
+ENDIF
+
+;Toll policy
+IF(LI.2.POLICY>0)
+  TOLLPOLICY = LI.2.POLICY
+ELSE
+  TOLLPOLICY = 0
 ENDIF
 
 ;Toll segment number
@@ -47,12 +53,12 @@ ENDIF
 IF({Distance}=0)
   DISTANCE=0.001
 ELSE
-  DISTANCE = {Distance};/100
+  DISTANCE ={Distance};/100
 ENDIF
 
 ;Number of Lanes
 IF({Number of Lanes}=0)
-  NUM_LANES = 0 ;1
+  NUM_LANES = 1;0 ;1
 ELSE
   NUM_LANES = {Number of Lanes}
 ENDIF
@@ -60,19 +66,19 @@ ENDIF
 IF({Number of Lanes}=0) ABORT MSG='***Number of Lanes = 0 - Review Network File***'
 
 ;Facility Type
-IF(LI.3.Ftype=91)
-  FTYPE = 91
-ELSEIF({Facility Type}=0)
-  FTYPE = 52
-ELSEIF({Facility Type}=90)
-  FTYPE = 10
-ELSE
-  FTYPE = {Facility Type}
-ENDIF
+;IF(LI.3.FTYPE=96)
+;  FTYPE = 96
+;ELSEIF({Facility Type}=0)
+;  FTYPE = 52
+;ELSEIF({Facility Type}=90)
+;  FTYPE = 10
+;ELSE
+;  FTYPE = {Facility Type}
+;ENDIF
 
 ;Free Flow Speed
-IF({Free Flow Speed}>0)
-  SPEED = {Free Flow Speed}
+IF({Free Flow Speed}==0)
+  SPEED = 25
 /*ELSEIF(LI.1.TIME2=0)
   SPEED = 999*/
 ELSE
@@ -86,11 +92,6 @@ ELSEIF(LI.4.HRCAP>0)
   CAPACITY = LI.4.HRCAP
 ELSE
   CAPACITY = {Capacity per Lane};/10/LI.1.NUM_LANES
-ENDIF
-
-; Manual overwrite
-IF(LI.1.Ftype=96)
-    CAPACITY = 1850 
 ENDIF
 
 ;DIR
@@ -114,7 +115,7 @@ PRINT CSV=T, LIST=A(10.0L),B(10.0L),{Distance}(10.4L),{Number of Lanes}(5.0L),{F
 ENDRUN
 
 
-; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\01HWY00E.S"
+; Script for program HIGHWAY in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\01HWY00E.S"
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=HIGHWAY MSG='Directional Matrix'
 FILEO MATO[1] = "{SCENARIO_DIR}\Dir.MAT",
@@ -135,12 +136,15 @@ ENDPROCESS
 ENDRUN
 
 
-; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\01NET00D.S"
+; Script for program NETWORK in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\01NET00D.S"
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='Toll Link Distance'
 FILEO NETO = "{SCENARIO_DIR}\Assign_Input_Net.NET"
 FILEI LINKI[1] = "{SCENARIO_DIR}\Assign_Input_Net_1.NET"
-
+/*
+DISTANCE_1 = LI.1.DISTANCE
+DISTANCE = LI.1.DISTANCE / 100
+*/
 IF (LI.1.FTYPE = {Toll Link FTYPE Number})
   TL_DIST = LI.1.DISTANCE
 ELSE
@@ -158,8 +162,6 @@ ELSEIF('{Trip Table Type}'='Hourly')
   Trip_Table = 2
 ELSEIF('{Trip Table Type}'='PK_OP')
   Trip_Table = 3
-ELSEIF('{Trip Table Type}'='ODME')
-  Trip_Table = 4
 ENDIF
 
 
@@ -171,8 +173,6 @@ Elseif (Trip_Table=2)
   goto Trip_Table_2
 Elseif (Trip_Table=3)
   goto Trip_Table_3
-Elseif (Trip_Table=4)
-  goto Trip_Table_4
 Else
   PRINT LIST='Application Error: No Branch Selected from Branch Control "Trip Table"'
   ABORT
@@ -193,7 +193,7 @@ LOOP IterNum = 1, 24, 1
 
 ; End of PILOT Script
 
-; Script for program MATRIX in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\App\00MAT00A.S"
+; Script for program MATRIX in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\App\00MAT00A.S"
 ;;<<Default Template>><<MATRIX>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=MATRIX
@@ -292,7 +292,7 @@ goto Trip_Table_END
 *Del "{SCENARIO_DIR}\Log_Trip_Table_Totals.csv"
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00HWY02B.S"
+; Script for program HIGHWAY in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00HWY02B.S"
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=HIGHWAY
 FILEO MATO[1] = "{SCENARIO_DIR}\Dir2.MAT",
@@ -329,9 +329,9 @@ LOOP HR = 1, 24, 1
 ; PILOT Script
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 
-IF (HR=7-9)
+IF (HR=8-10)
   TP = 'AM'
-ELSEIF (HR=17-19)
+ELSEIF (HR=16-18)
   TP = 'PM'
 ELSE
   TP = 'OP'
@@ -339,7 +339,7 @@ ENDIF
 ;*COPY "{Trip Table}Trip Table *.MAT" "{SCENARIO_DIR}"
 ; End of PILOT Script
 
-; Script for program MATRIX in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00MAT02C.S"
+; Script for program MATRIX in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00MAT02C.S"
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=MATRIX
 FILEO PRINTO[1] = "{SCENARIO_DIR}\Log_Trip_Table_Totals.csv",
@@ -397,7 +397,7 @@ ENDRUN
 
 ENDLOOP
 
-; Script for program MATRIX in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00MAT02D.S"
+; Script for program MATRIX in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00MAT02D.S"
 ;;<<Default Template>><<MATRIX>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=MATRIX MSG='Add to AM OD for checking - Part 1 - 4'
@@ -417,7 +417,7 @@ MW[3]= MI.1.3 + MI.2.3 + MI.3.3 ; TRK
 ENDRUN
 
 
-; Script for program MATRIX in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00MAT02E.S"
+; Script for program MATRIX in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00MAT02E.S"
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=MATRIX MSG='Add to PM OD for checking - Part 2 - 4'
 FILEI MATI[3] = "{SCENARIO_DIR}\Trip Table 19.MAT"
@@ -435,7 +435,7 @@ MW[3]= MI.1.3 + MI.2.3 + MI.3.3 ; TRK
 ENDRUN
 
 
-; Script for program MATRIX in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00MAT02F.S"
+; Script for program MATRIX in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00MAT02F.S"
 ;;<<Default Template>><<MATRIX>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=MATRIX MSG='Add to OP OD for checking - Part 3 - 4'
@@ -471,10 +471,10 @@ MW[3]= MI.1.3 + MI.2.3 + MI.3.3 + MI.4.3 + MI.5.3 + MI.6.3 + MI.7.3 + MI.8.3 + M
 ENDRUN
 
 
-; Script for program MATRIX in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00MAT02G.S"
+; Script for program MATRIX in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00MAT02G.S"
 ;;<<Default Template>><<MATRIX>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
-RUN PGM=MATRIX PRNFILE="M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00MAT02A.PRN" MSG='Add to Daily OD for checking - Part 4 - 4'
+RUN PGM=MATRIX PRNFILE="M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00MAT02A.PRN" MSG='Add to Daily OD for checking - Part 4 - 4'
 FILEO MATO[1] = "{SCENARIO_DIR}\Trip Table Daily.MAT",
     MO=1-3,NAME=SOV,HOV,TRK
 FILEI MATI[3] = "{SCENARIO_DIR}\Trip Table OP.MAT"
@@ -489,49 +489,6 @@ MW[3]= MI.1.3 + MI.2.3 + MI.3.3 ; TRK
 
 ENDRUN
 
-
-goto Trip_Table_END
-
-:Trip_Table_4
-; PILOT Script
-; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
-
-*DEL "{SCENARIO_DIR}\Log_Trip Table Totals.csv"
-
-; End of PILOT Script
-
-LOOP IterNum = 1, 24, 1
-
-; PILOT Script
-; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
-
-
-; End of PILOT Script
-
-; Script for program MATRIX in file "M:\PROJECTS\VETERANS ELTODV2.3 2017-0628_PDNE\APP\00MAT02H.S"
-;;<<Default Template>><<MATRIX>><<Default>>;;
-; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
-RUN PGM=MATRIX
-FILEO PRINTO[1] = "{SCENARIO_DIR}\Log_Trip Table Totals.csv",
-  APPEND=T
-FILEI MATI[1] = "{SCENARIO_DIR}\ODME_TripTables\Trip Table @IterNum@.MAT"
-FILEO MATO[1] = "{SCENARIO_DIR}\Trip Table @IterNum@.MAT",
- MO=1-3,NAME=SOV,HOV,TRK
-                                                               
-MW[1] = MI.1.1 * {Trip Table Factor}   ;SOV
-MW[2] = MI.1.2 * {Trip Table Factor}   ;HOV
-MW[3] = MI.1.3 * {Trip Table Factor}   ;TRK
-
-; Row Total
-_SUM = _SUM + ROWSUM(1) + ROWSUM(1) + ROWSUM (3)
-IF (I={Number of Zones})
-  PRINT CSV=T, LIST=@IterNum@, _SUM, PRINTO=1
-ENDIF
-
-ENDRUN
-
-
-ENDLOOP
 
 goto Trip_Table_END
 
@@ -559,7 +516,7 @@ ELSE
 ENDIF
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\02HWY03A.S"
+; Script for program HIGHWAY in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\02HWY03A.S"
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN" MSG='Highway Assignment'
@@ -855,7 +812,15 @@ FUNCTION {
  ;4 piece function: flat 0 for LOSA, linear increase to "min toll" for LOSA/LOSB transition, "min toll" for LOSB, dynamic curve for LOSC and worse
  
   IF (LW.TOLLSEGNUM>0)
-  
+  IF (LI.TOLLPOLICY == 1)
+      ;Toll curve
+      _TollRate = (LW.MINSEGTOLL + ({Max Per Segment Toll}-LW.MINSEGTOLL)*(V/C+{VC Toll Offset})^{Toll Exponent})
+      ;Adjust for max segment toll
+      _TollRate_adj = MIN(_TollRate, {Max Per Segment Toll})
+      ;Adjust for min segment toll 
+      _TollRate_Current = MAX(_TollRate_adj, LW.MINSEGTOLL)
+      
+  ELSE
     IF ((V/C)<{LOS A PriceInc VC})
     
       _TollRate = 0
@@ -863,8 +828,7 @@ FUNCTION {
       _TollRate_Current= 0
     
     ELSEIF ((V/C)<{LOS B VC})
-    
-    
+     
       _TollRate = (((V/C)-{LOS A PriceInc VC})/({LOS B VC}-{LOS A PriceInc VC}))*LW.MINSEGTOLL
       _TollRate_adj = _TollRate
       _TollRate_Current= _TollRate   
@@ -887,16 +851,19 @@ FUNCTION {
       ;Adjust for min segment toll 
       _TollRate_Current = MAX(_TollRate_adj, LW.MINSEGTOLL)
       ENDIF
-          
+ ENDIF         
     LW.TOLL = _TollRate_Current 
-  
+    
+ IF (LI.TOLLPOLICY == 1)
+    LW.TOLL_REV = LW.TOLL
+ ELSE
      ;Adjust toll used for calculating revenue if LOSA conditions or the EL speed was below the policy minimum    
     IF ((V/C) < {LOS B VC} || LW.SPD < {Policy Min EL Speed}) 
       LW.TOLL_REV = 0
     ELSE
       LW.TOLL_REV = LW.TOLL
     ENDIF
-    
+ ENDIF   
         PRINT CSV=T, LIST=ITERATION(5.0),A(5.0),B(5.0),LW.TOLLSEGNUM(10.0),_TollRate(15.2),_TollRate_adj(15.2),_TollRate_Current(15.2),LW.TOLL(15.2),LW.TOLL_REV(15.2),V/C(10.2),{Toll Exponent}(10.2),_MaxCorrection(15.2),PRINTO=2
 
   ENDIF
@@ -965,7 +932,7 @@ ELSE
 ENDIF
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\02HWY03B.S"
+; Script for program HIGHWAY in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\02HWY03B.S"
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN"
@@ -1170,10 +1137,10 @@ PROCESS PHASE=ILOOP
     ;Write log file with details 
     ;SOV
     IF (ITERATION=1 && I=1 && J=1)  ;Write header in detail log file
-      PRINT CSV=T,LIST='ITER'(5L),'I'(5L),'J'(5L),'NTL_FFTime'(10L),'NTL_Time'(10L),'TL_FFTime'(10L),'TL_Time'(10L),'NTL_Pcv_Time'(12L),'TL_Pcv_Time'(12L),'NTL_Dist'(10L),'TL_Dist'(10L),'TL_ONLY_Dist'(12L),'NTL_Toll'(10L),'TL_Toll'(10L),'Share'(10L),'Trip_TOT'(10L),'Trip_NTL'(10L),'Trip_TL'(10L),'Trip_TL_F'(10L),'F_TL_FFTime'(10L),'F_TL_Time'(10L),'F_TL_PcvTime'(12L),'F_TL_Dist'(10L),'F_TL_Toll'(10L),'F_TL_ONLY_Dist'(15L),'Toll_Const'(10L),'NTL_CMTime'(10L),'TL_CMTime'(10L), PRINTO=1
+      PRINT CSV=T,LIST='ITER'(5L),'I'(5L),'J'(5L),'NTL_FFTime'(10L),'NTL_Time'(10L),'TL_FFTime'(10L),'TL_Time'(10L),'NTL_Pcv_Time'(12L),'TL_Pcv_Time'(12L),'NTL_Dist'(10L),'TL_Dist'(10L),'TL_ONLY_Dist'(12L),'NTL_Toll'(10L),'TL_Toll'(10L),'Share'(10L),'Trip_TOT'(10L),'Trip_NTL'(10L),'Trip_TL'(10L),'Trip_TL_F'(10L),'F_TL_FFTime'(10L),'F_TL_Time'(10L),'F_TL_PcvTime'(12L),'F_TL_Dist'(10L),'F_TL_Toll'(10L),'F_TL_ONLY_Dist'(15L),'Toll_Const'(10L),PRINTO=1
     ENDIF
     IF (MW[1]>0)  ;Log only when there are trips between the zone pair
-      PRINT CSV=T,LIST=ITERATION(5.0),I(5.0),J(5.0),MW[15](10.4),MW[11](10.4),MW[25](10.4),MW[21](10.4),MW[14](10.4),MW[24](10.4),MW[12],MW[22],MW[26],MW[13],MW[23],MW[101](15.4),MW[1],MW[102],MW[104],MW[103],MW[75](10.4),MW[71](10.4),MW[74](10.4),MW[72],MW[73],MW[76],_TollConstant, MW[17], MW[27],PRINTO=1
+      PRINT CSV=T,LIST=ITERATION(5.0),I(5.0),J(5.0),MW[15](10.4),MW[11](10.4),MW[25](10.4),MW[21](10.4),MW[14](10.4),MW[24](10.4),MW[12],MW[22],MW[26],MW[13],MW[23],MW[101](15.4),MW[1],MW[102],MW[104],MW[103],MW[75](10.4),MW[71](10.4),MW[74](10.4),MW[72],MW[73],MW[76],_TollConstant,PRINTO=1
     ENDIF
     ;HOV
     IF (ITERATION=1 && I=1 && J=1)  ;Write header in detail log file
@@ -1261,7 +1228,15 @@ FUNCTION {
  ;4 piece function: flat 0 for LOSA, linear increase to "min toll" for LOSA/LOSB transition, "min toll" for LOSB, dynamic curve for LOSC and worse
  
   IF (LW.TOLLSEGNUM>0)
-  
+  IF (LI.TOLLPOLICY == 1)
+      ;Toll curve
+      _TollRate = (LW.MINSEGTOLL + ({Max Per Segment Toll}-LW.MINSEGTOLL)*(V/C+{VC Toll Offset})^{Toll Exponent})
+      ;Adjust for max segment toll
+      _TollRate_adj = MIN(_TollRate, {Max Per Segment Toll})
+      ;Adjust for min segment toll 
+      _TollRate_Current = MAX(_TollRate_adj, LW.MINSEGTOLL)
+      
+  ELSE
     IF ((V/C)<{LOS A PriceInc VC})
     
       _TollRate = 0
@@ -1269,8 +1244,7 @@ FUNCTION {
       _TollRate_Current= 0
     
     ELSEIF ((V/C)<{LOS B VC})
-    
-    
+     
       _TollRate = (((V/C)-{LOS A PriceInc VC})/({LOS B VC}-{LOS A PriceInc VC}))*LW.MINSEGTOLL
       _TollRate_adj = _TollRate
       _TollRate_Current= _TollRate   
@@ -1293,16 +1267,19 @@ FUNCTION {
       ;Adjust for min segment toll 
       _TollRate_Current = MAX(_TollRate_adj, LW.MINSEGTOLL)
       ENDIF
-          
+ ENDIF         
     LW.TOLL = _TollRate_Current 
-  
+    
+ IF (LI.TOLLPOLICY == 1)
+    LW.TOLL_REV = LW.TOLL
+ ELSE
      ;Adjust toll used for calculating revenue if LOSA conditions or the EL speed was below the policy minimum    
     IF ((V/C) < {LOS B VC} || LW.SPD < {Policy Min EL Speed}) 
       LW.TOLL_REV = 0
     ELSE
       LW.TOLL_REV = LW.TOLL
     ENDIF
-    
+ ENDIF   
         PRINT CSV=T, LIST=ITERATION(5.0),A(5.0),B(5.0),LW.TOLLSEGNUM(10.0),_TollRate(15.2),_TollRate_adj(15.2),_TollRate_Current(15.2),LW.TOLL(15.2),LW.TOLL_REV(15.2),V/C(10.2),{Toll Exponent}(10.2),_MaxCorrection(15.2),PRINTO=2
 
   ENDIF
@@ -1371,12 +1348,10 @@ ELSE
 ENDIF
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\02HWY03C.S"
+; Script for program HIGHWAY in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\02HWY03C.S"
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN"
-FILEO PRINTO[6] = "{SCENARIO_DIR}\Trace_EL_@HR@.PRN"
-FILEO PRINTO[5] = "{SCENARIO_DIR}\Trace_GL_@HR@.PRN"
 FILEI MATI[2] = "{SCENARIO_DIR}\Dir.MAT"
 FILEO PRINTO[4] = "{SCENARIO_DIR}\VDF@HR@.PRN"
 FILEO PRINTO[3] = "{SCENARIO_DIR}\RUNDETAIL_HOV@HR@.PRN"
@@ -1388,7 +1363,7 @@ FILEO NETO = "{SCENARIO_DIR}\LOADED_HOUR@HR@.NET",
 FILEO MATO[2] = "{SCENARIO_DIR}\REV@HR@.MAT",
 MO=201,105,202,211,115,212, NAME=SOV_TOLL,SOV_VOL,SOV_REV,HOV_TOLL,HOV_VOL,HOV_REV, COMBINE = TRUE
 FILEO MATO[1] = "{SCENARIO_DIR}\SKIM@HR@.MAT",
-MO=101,1,106,2,116,12, NAME=EL_SHARE_SOV,VOL_SOV,VMT_SOV,VOL_HOV,VMT_HOV, NTL_DIST, COMBINE = TRUE
+MO=101,1,106,2,116, NAME=EL_SHARE_SOV,VOL_SOV,VMT_SOV,VOL_HOV,VMT_HOV, COMBINE = TRUE
 FILEI LOOKUPI[1] = "{Hourly Parameters}"
 FILEI NETI = "{SCENARIO_DIR}\Assign_Input_Net.NET"
 FILEI MATI[1] = "{SCENARIO_DIR}\Trip Table @HR@.MAT"
@@ -1468,15 +1443,12 @@ PROCESS PHASE=ILOOP
   
   ;Path building
   ;SOV GU lane path 
-  PATHLOAD PATH=LW.PERCV_TIME, MW[11]=PATHTRACE(LW.CGTIME), NOACCESS=9999, MW[12]=PATHTRACE(LI.DISTANCE), NOACCESS=9999, MW[13]=PATHTRACE(LW.TOLL), NOACCESS=9999, MW[313]=PATHTRACE(LW.TOLL_REV), NOACCESS=9999, MW[14]=PATHTRACE(LW.PERCV_TIME), NOACCESS=9999, MW[15]=PATHTRACE(LW.FFTIME), NOACCESS=9999, MW[17]=PATHTRACE(LW.CM_TIME), NOACCESS=9999, EXCLUDEGROUP=1,2
+  PATHLOAD PATH=LW.PERCV_TIME, MW[11]=PATHTRACE(LW.CGTIME), NOACCESS=9999, MW[12]=PATHTRACE(LI.DISTANCE), NOACCESS=9999, MW[13]=PATHTRACE(LW.TOLL), NOACCESS=9999, MW[313]=PATHTRACE(LW.TOLL_REV), NOACCESS=9999, MW[14]=PATHTRACE(LW.PERCV_TIME), NOACCESS=9999, MW[15]=PATHTRACE(LW.FFTIME), NOACCESS=9999, MW[17]=PATHTRACE(LW.CM_TIME), NOACCESS=9999, EXCLUDEGROUP=1,2 
   ;SOV Toll lane path time based
   PATHLOAD PATH=LW.PERCV_TIME, MW[21]=PATHTRACE(LW.CGTIME), NOACCESS=9999, MW[22]=PATHTRACE(LI.DISTANCE), NOACCESS=9999, MW[23]=PATHTRACE(LW.TOLL), NOACCESS=0, MW[323]=PATHTRACE(LW.TOLL_REV), NOACCESS=0, MW[24]=PATHTRACE(LW.PERCV_TIME), NOACCESS=9999, MW[25]=PATHTRACE(LW.FFTIME), NOACCESS=9999, MW[26]=PATHTRACE(LW.TL_DIST), NOACCESS=9999, MW[27]=PATHTRACE(LW.CM_TIME), NOACCESS=9999, MW[28]=PATHTRACE(LW.TOLLSEGLEN), NOACCESS=9999,EXCLUDEGROUP=2
   ;SOV Toll lane path forced on toll lane
   PATHLOAD PATH=LW.DUMMY_TIME, MW[71]=PATHTRACE(LW.CGTIME), NOACCESS=9999, MW[72]=PATHTRACE(LI.DISTANCE), NOACCESS=9999, MW[73]=PATHTRACE(LW.TOLL), NOACCESS=0, MW[373]=PATHTRACE(LW.TOLL_REV), NOACCESS=0, MW[74]=PATHTRACE(LW.PERCV_TIME), NOACCESS=9999, MW[75]=PATHTRACE(LW.FFTIME), NOACCESS=9999, MW[76]=PATHTRACE(LW.TL_DIST), NOACCESS=9999, MW[77]=PATHTRACE(LW.CM_TIME), NOACCESS=9999, MW[78]=PATHTRACE(LW.CM_TIME), NOACCESS=9999, EXCLUDEGROUP=2 
-    
-   PATHLOAD PATH=LW.PERCV_TIME, MW[998]=PATHTRACE(LW.DISTANCE),  TRACE=(I=34,43 & J=41,33) EXCLUDEGROUP=1,2
-   PATHLOAD PATH=LW.PERCV_TIME, MW[999]=PATHTRACE(LW.DISTANCE),  TRACE=(I=34,43 & J=41,33) EXCLUDEGROUP= 2
-   
+             
   ;HOV GU lane path 
   PATHLOAD PATH=LW.PERCV_TIME, MW[31]=PATHTRACE(LW.CGTIME), NOACCESS=9999, MW[32]=PATHTRACE(LI.DISTANCE), NOACCESS=9999, MW[33]=PATHTRACE(LW.TOLL), NOACCESS=9999, MW[333]=PATHTRACE(LW.TOLL_REV), NOACCESS=9999, MW[34]=PATHTRACE(LW.PERCV_TIME), NOACCESS=9999, MW[35]=PATHTRACE(LW.FFTIME), NOACCESS=9999, MW[37]=PATHTRACE(LW.CM_TIME), NOACCESS=9999, EXCLUDEGROUP=1 
   ;HOV Toll lane path time based
@@ -1516,14 +1488,20 @@ PROCESS PHASE=ILOOP
         MW[201] = 0   ;SOV toll charged
         MW[202] = 0   ;Revenue
       ELSE  ;Forced toll path
-      MW[101] = 1/(1+EXP(-1*_TollConstant-{Travel Time Coefficient}*(MW[77]-MW[17])-{Toll Coefficient}*(MW[73]-MW[13])-{Reliability Coefficient}*{Travel Time Coefficient}*{Reliability Time Coefficient}*((MW[15]-MW[11])*MW[12]^(-1*{Reliability Distance Coefficient})-(MW[75]-MW[71])*MW[72]^(-1*{Reliability Distance Coefficient}))+MIN(MAX({Distance Penalty Y}-{Distance Penalty Y}*(MW[76]-{Distance Penalty X1})/({Distance Penalty X2}-{Distance Penalty X1}),0),{Distance Penalty Y})))
+      ;MW[101] = 1/(1+EXP(-1* _TollConstant -{Travel Time Coefficient}*(MW[77]-MW[17])-{Toll Coefficient}*(MW[73]-MW[13])-{Reliability Coefficient}*{Travel Time Coefficient}*{Reliability Time Coefficient}*((MW[15]-MW[11])*MW[12]^(-1*{Reliability Distance Coefficient})-(MW[75]-MW[71])*MW[72]^(-1*{Reliability Distance Coefficient}))+MIN(MAX({Distance Penalty Y}-{Distance Penalty Y}*(MW[76]-{Distance Penalty X1})/({Distance Penalty X2}-{Distance Penalty X1}),0),{Distance Penalty Y})))
+      
+            MW[101] = 1/(1+EXP(-1* -1.19273 -{Travel Time Coefficient}*(MW[77]-MW[17])-{Toll Coefficient}*(MW[73]-MW[13])-{Reliability Coefficient}*{Travel Time Coefficient}*{Reliability Time Coefficient}*((MW[15]-MW[11])*MW[12]^(-1*{Reliability Distance Coefficient})-(MW[75]-MW[71])*MW[72]^(-1*{Reliability Distance Coefficient}))+MIN(MAX({Distance Penalty Y}-{Distance Penalty Y}*(MW[76]-{Distance Penalty X1})/({Distance Penalty X2}-{Distance Penalty X1}),0),{Distance Penalty Y})))
+            
       MW[102] = MW[1] * (1-MW[101])   ;GU trip table
       MW[103] = MW[1] - MW[102]       ;ML trip table
       MW[201] = MW[373]                ;SOV toll charged
       MW[202] = MW[201]*MW[103]       ;Revenue
       ENDIF
     ELSE  ;Time based toll path
-      MW[101] = 1/(1+EXP(-1*_TollConstant-{Travel Time Coefficient}*(MW[27]-MW[17])-{Toll Coefficient}*(MW[23]-MW[13])-{Reliability Coefficient}*{Travel Time Coefficient}*{Reliability Time Coefficient}*((MW[15]-MW[11])*MW[12]^(-1*{Reliability Distance Coefficient})-(MW[25]-MW[21])*MW[22]^(-1*{Reliability Distance Coefficient}))+MIN(MAX({Distance Penalty Y}-{Distance Penalty Y}*(MW[26]-{Distance Penalty X1})/({Distance Penalty X2}-{Distance Penalty X1}),0),{Distance Penalty Y})))  
+      ; MW[101] = 1/(1+EXP(-1*_TollConstant-{Travel Time Coefficient}*(MW[27]-MW[17])-{Toll Coefficient}*(MW[23]-MW[13])-{Reliability Coefficient}*{Travel Time Coefficient}*{Reliability Time Coefficient}*((MW[15]-MW[11])*MW[12]^(-1*{Reliability Distance Coefficient})-(MW[25]-MW[21])*MW[22]^(-1*{Reliability Distance Coefficient}))+MIN(MAX({Distance Penalty Y}-{Distance Penalty Y}*(MW[26]-{Distance Penalty X1})/({Distance Penalty X2}-{Distance Penalty X1}),0),{Distance Penalty Y})))  
+      
+            MW[101] = 1/(1+EXP(-1* -1.19273 -{Travel Time Coefficient}*(MW[27]-MW[17])-{Toll Coefficient}*(MW[23]-MW[13])-{Reliability Coefficient}*{Travel Time Coefficient}*{Reliability Time Coefficient}*((MW[15]-MW[11])*MW[12]^(-1*{Reliability Distance Coefficient})-(MW[25]-MW[21])*MW[22]^(-1*{Reliability Distance Coefficient}))+MIN(MAX({Distance Penalty Y}-{Distance Penalty Y}*(MW[26]-{Distance Penalty X1})/({Distance Penalty X2}-{Distance Penalty X1}),0),{Distance Penalty Y})))  
+            
       MW[102] = MW[1] * (1-MW[101])   ;GU trip table
       MW[104] = MW[1] - MW[102]       ;ML trip table
       MW[201] = MW[323]                ;SOV toll charged
@@ -1581,10 +1559,10 @@ PROCESS PHASE=ILOOP
     ;Write log file with details 
     ;SOV
     IF (ITERATION=1 && I=1 && J=1)  ;Write header in detail log file
-      PRINT CSV=T,LIST='ITER'(5L),'I'(5L),'J'(5L),'NTL_FFTime'(10L),'NTL_Time'(10L),'TL_FFTime'(10L),'TL_Time'(10L),'NTL_Pcv_Time'(12L),'TL_Pcv_Time'(12L),'NTL_Dist'(10L),'TL_Dist'(10L),'TL_ONLY_Dist'(12L),'NTL_Toll'(10L),'TL_Toll'(10L),'Share'(10L),'Trip_TOT'(10L),'Trip_NTL'(10L),'Trip_TL'(10L),'Trip_TL_F'(10L),'F_TL_FFTime'(10L),'F_TL_Time'(10L),'F_TL_PcvTime'(12L),'F_TL_Dist'(10L),'F_TL_Toll'(10L),'F_TL_ONLY_Dist'(15L),'Toll_Const'(10L),'NTL_CMTime'(10L),'TL_CMTime'(10L), PRINTO=1
+      PRINT CSV=T,LIST='ITER'(5L),'I'(5L),'J'(5L),'NTL_FFTime'(10L),'NTL_Time'(10L),'TL_FFTime'(10L),'TL_Time'(10L),'NTL_Pcv_Time'(12L),'TL_Pcv_Time'(12L),'NTL_Dist'(10L),'TL_Dist'(10L),'TL_ONLY_Dist'(12L),'NTL_Toll'(10L),'TL_Toll'(10L),'Share'(10L),'Trip_TOT'(10L),'Trip_NTL'(10L),'Trip_TL'(10L),'Trip_TL_F'(10L),'F_TL_FFTime'(10L),'F_TL_Time'(10L),'F_TL_PcvTime'(12L),'F_TL_Dist'(10L),'F_TL_Toll'(10L),'F_TL_ONLY_Dist'(15L),'Toll_Const'(10L),PRINTO=1
     ENDIF
     IF (MW[1]>0)  ;Log only when there are trips between the zone pair
-      PRINT CSV=T,LIST=ITERATION(5.0),I(5.0),J(5.0),MW[15](10.4),MW[11](10.4),MW[25](10.4),MW[21](10.4),MW[14](10.4),MW[24](10.4),MW[12],MW[22],MW[26],MW[13],MW[23],MW[101](15.4),MW[1],MW[102],MW[104],MW[103],MW[75](10.4),MW[71](10.4),MW[74](10.4),MW[72],MW[73],MW[76],_TollConstant, MW[17], MW[27],PRINTO=1
+      PRINT CSV=T,LIST=ITERATION(5.0),I(5.0),J(5.0),MW[15](10.4),MW[11](10.4),MW[25](10.4),MW[21](10.4),MW[14](10.4),MW[24](10.4),MW[12],MW[22],MW[26],MW[13],MW[23],MW[101](15.4),MW[1],MW[102],MW[104],MW[103],MW[75](10.4),MW[71](10.4),MW[74](10.4),MW[72],MW[73],MW[76],_TollConstant,PRINTO=1
     ENDIF
     ;HOV
     IF (ITERATION=1 && I=1 && J=1)  ;Write header in detail log file
@@ -1626,7 +1604,7 @@ V = VOL[1]+VOL[2]+VOL[3]+VOL[4]+VOL[5]+VOL[6]+VOL[7]+VOL[8]
 
 ;Calculate Congested time
   IF ('{Volume Delay Function}'='Akcelik')
-    LW.CGTIME = LI.DELAY + T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)
+    LW.CGTIME = T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)
   ELSE
     IF ({Override BPR Coefficients in Network}=1)
       ;LW.CGTIME = T0*(1+LI.BPR_Alpha*(V/C)^LI.BPR_Beta)
@@ -1640,7 +1618,7 @@ V = VOL[1]+VOL[2]+VOL[3]+VOL[4]+VOL[5]+VOL[6]+VOL[7]+VOL[8]
 ;Users should update formula if using link-specific BPR coefficients 
 FUNCTION {
 
-    TC[1] = _Akcelik * (T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)) + _BPR * (T0*(1+{BPR Alpha}*(V/C)^{BPR Beta})) + LI.DELAY
+    TC[1] = _Akcelik * (T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)) + _BPR * (T0*(1+{BPR Alpha}*(V/C)^{BPR Beta}))
         
 }
  
@@ -1672,7 +1650,15 @@ FUNCTION {
  ;4 piece function: flat 0 for LOSA, linear increase to "min toll" for LOSA/LOSB transition, "min toll" for LOSB, dynamic curve for LOSC and worse
  
   IF (LW.TOLLSEGNUM>0)
-  
+  IF (LI.TOLLPOLICY == 1)
+      ;Toll curve
+      _TollRate = (LW.MINSEGTOLL + ({Max Per Segment Toll}-LW.MINSEGTOLL)*(V/C+{VC Toll Offset})^{Toll Exponent})
+      ;Adjust for max segment toll
+      _TollRate_adj = MIN(_TollRate, {Max Per Segment Toll})
+      ;Adjust for min segment toll 
+      _TollRate_Current = MAX(_TollRate_adj, LW.MINSEGTOLL)
+      
+  ELSE
     IF ((V/C)<{LOS A PriceInc VC})
     
       _TollRate = 0
@@ -1680,8 +1666,7 @@ FUNCTION {
       _TollRate_Current= 0
     
     ELSEIF ((V/C)<{LOS B VC})
-    
-    
+     
       _TollRate = (((V/C)-{LOS A PriceInc VC})/({LOS B VC}-{LOS A PriceInc VC}))*LW.MINSEGTOLL
       _TollRate_adj = _TollRate
       _TollRate_Current= _TollRate   
@@ -1704,16 +1689,19 @@ FUNCTION {
       ;Adjust for min segment toll 
       _TollRate_Current = MAX(_TollRate_adj, LW.MINSEGTOLL)
       ENDIF
-          
+ ENDIF         
     LW.TOLL = _TollRate_Current 
-  
+    
+ IF (LI.TOLLPOLICY == 1)
+    LW.TOLL_REV = LW.TOLL
+ ELSE
      ;Adjust toll used for calculating revenue if LOSA conditions or the EL speed was below the policy minimum    
     IF ((V/C) < {LOS B VC} || LW.SPD < {Policy Min EL Speed}) 
       LW.TOLL_REV = 0
     ELSE
       LW.TOLL_REV = LW.TOLL
     ENDIF
-    
+ ENDIF   
         PRINT CSV=T, LIST=ITERATION(5.0),A(5.0),B(5.0),LW.TOLLSEGNUM(10.0),_TollRate(15.2),_TollRate_adj(15.2),_TollRate_Current(15.2),LW.TOLL(15.2),LW.TOLL_REV(15.2),V/C(10.2),{Toll Exponent}(10.2),_MaxCorrection(15.2),PRINTO=2
 
   ENDIF
@@ -1782,7 +1770,7 @@ ELSE
 ENDIF
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\02HWY03D.S"
+; Script for program HIGHWAY in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\02HWY03D.S"
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN"
@@ -2078,7 +2066,15 @@ FUNCTION {
  ;4 piece function: flat 0 for LOSA, linear increase to "min toll" for LOSA/LOSB transition, "min toll" for LOSB, dynamic curve for LOSC and worse
  
   IF (LW.TOLLSEGNUM>0)
-  
+  IF (LI.TOLLPOLICY == 1)
+      ;Toll curve
+      _TollRate = (LW.MINSEGTOLL + ({Max Per Segment Toll}-LW.MINSEGTOLL)*(V/C+{VC Toll Offset})^{Toll Exponent})
+      ;Adjust for max segment toll
+      _TollRate_adj = MIN(_TollRate, {Max Per Segment Toll})
+      ;Adjust for min segment toll 
+      _TollRate_Current = MAX(_TollRate_adj, LW.MINSEGTOLL)
+      
+  ELSE
     IF ((V/C)<{LOS A PriceInc VC})
     
       _TollRate = 0
@@ -2086,8 +2082,7 @@ FUNCTION {
       _TollRate_Current= 0
     
     ELSEIF ((V/C)<{LOS B VC})
-    
-    
+     
       _TollRate = (((V/C)-{LOS A PriceInc VC})/({LOS B VC}-{LOS A PriceInc VC}))*LW.MINSEGTOLL
       _TollRate_adj = _TollRate
       _TollRate_Current= _TollRate   
@@ -2110,16 +2105,19 @@ FUNCTION {
       ;Adjust for min segment toll 
       _TollRate_Current = MAX(_TollRate_adj, LW.MINSEGTOLL)
       ENDIF
-          
+ ENDIF         
     LW.TOLL = _TollRate_Current 
-  
+    
+ IF (LI.TOLLPOLICY == 1)
+    LW.TOLL_REV = LW.TOLL
+ ELSE
      ;Adjust toll used for calculating revenue if LOSA conditions or the EL speed was below the policy minimum    
     IF ((V/C) < {LOS B VC} || LW.SPD < {Policy Min EL Speed}) 
       LW.TOLL_REV = 0
     ELSE
       LW.TOLL_REV = LW.TOLL
     ENDIF
-    
+ ENDIF   
         PRINT CSV=T, LIST=ITERATION(5.0),A(5.0),B(5.0),LW.TOLLSEGNUM(10.0),_TollRate(15.2),_TollRate_adj(15.2),_TollRate_Current(15.2),LW.TOLL(15.2),LW.TOLL_REV(15.2),V/C(10.2),{Toll Exponent}(10.2),_MaxCorrection(15.2),PRINTO=2
 
   ENDIF
@@ -2188,7 +2186,7 @@ ELSE
 ENDIF
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\02HWY03E.S"
+; Script for program HIGHWAY in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\02HWY03E.S"
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN"
@@ -2484,7 +2482,15 @@ FUNCTION {
  ;4 piece function: flat 0 for LOSA, linear increase to "min toll" for LOSA/LOSB transition, "min toll" for LOSB, dynamic curve for LOSC and worse
  
   IF (LW.TOLLSEGNUM>0)
-  
+  IF (LI.TOLLPOLICY == 1)
+      ;Toll curve
+      _TollRate = (LW.MINSEGTOLL + ({Max Per Segment Toll}-LW.MINSEGTOLL)*(V/C+{VC Toll Offset})^{Toll Exponent})
+      ;Adjust for max segment toll
+      _TollRate_adj = MIN(_TollRate, {Max Per Segment Toll})
+      ;Adjust for min segment toll 
+      _TollRate_Current = MAX(_TollRate_adj, LW.MINSEGTOLL)
+      
+  ELSE
     IF ((V/C)<{LOS A PriceInc VC})
     
       _TollRate = 0
@@ -2492,8 +2498,7 @@ FUNCTION {
       _TollRate_Current= 0
     
     ELSEIF ((V/C)<{LOS B VC})
-    
-    
+     
       _TollRate = (((V/C)-{LOS A PriceInc VC})/({LOS B VC}-{LOS A PriceInc VC}))*LW.MINSEGTOLL
       _TollRate_adj = _TollRate
       _TollRate_Current= _TollRate   
@@ -2516,16 +2521,19 @@ FUNCTION {
       ;Adjust for min segment toll 
       _TollRate_Current = MAX(_TollRate_adj, LW.MINSEGTOLL)
       ENDIF
-          
+ ENDIF         
     LW.TOLL = _TollRate_Current 
-  
+    
+ IF (LI.TOLLPOLICY == 1)
+    LW.TOLL_REV = LW.TOLL
+ ELSE
      ;Adjust toll used for calculating revenue if LOSA conditions or the EL speed was below the policy minimum    
     IF ((V/C) < {LOS B VC} || LW.SPD < {Policy Min EL Speed}) 
       LW.TOLL_REV = 0
     ELSE
       LW.TOLL_REV = LW.TOLL
     ENDIF
-    
+ ENDIF   
         PRINT CSV=T, LIST=ITERATION(5.0),A(5.0),B(5.0),LW.TOLLSEGNUM(10.0),_TollRate(15.2),_TollRate_adj(15.2),_TollRate_Current(15.2),LW.TOLL(15.2),LW.TOLL_REV(15.2),V/C(10.2),{Toll Exponent}(10.2),_MaxCorrection(15.2),PRINTO=2
 
   ENDIF
@@ -2594,7 +2602,7 @@ ELSE
 ENDIF
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\02HWY03F.S"
+; Script for program HIGHWAY in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\02HWY03F.S"
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN"
@@ -2609,7 +2617,7 @@ FILEO NETO = "{SCENARIO_DIR}\LOADED_HOUR@HR@.NET",
 FILEO MATO[2] = "{SCENARIO_DIR}\REV@HR@.MAT",
 MO=201,105,202,211,115,212, NAME=SOV_TOLL,SOV_VOL,SOV_REV,HOV_TOLL,HOV_VOL,HOV_REV, COMBINE = TRUE
 FILEO MATO[1] = "{SCENARIO_DIR}\SKIM@HR@.MAT",
-MO=101,1,106,2,116, 12, NAME=EL_SHARE_SOV,VOL_SOV,VMT_SOV,VOL_HOV,VMT_HOV, NTL_DIST, COMBINE = TRUE
+MO=101,1,106,2,116, NAME=EL_SHARE_SOV,VOL_SOV,VMT_SOV,VOL_HOV,VMT_HOV, COMBINE = TRUE
 FILEI LOOKUPI[1] = "{Hourly Parameters}"
 FILEI NETI = "{SCENARIO_DIR}\Assign_Input_Net.NET"
 FILEI MATI[1] = "{SCENARIO_DIR}\Trip Table @HR@.MAT"
@@ -2799,10 +2807,10 @@ PROCESS PHASE=ILOOP
     ;Write log file with details 
     ;SOV
     IF (ITERATION=1 && I=1 && J=1)  ;Write header in detail log file
-      PRINT CSV=T,LIST='ITER'(5L),'I'(5L),'J'(5L),'NTL_FFTime'(10L),'NTL_Time'(10L),'TL_FFTime'(10L),'TL_Time'(10L),'NTL_Pcv_Time'(12L),'TL_Pcv_Time'(12L),'NTL_Dist'(10L),'TL_Dist'(10L),'TL_ONLY_Dist'(12L),'NTL_Toll'(10L),'TL_Toll'(10L),'Share'(10L),'Trip_TOT'(10L),'Trip_NTL'(10L),'Trip_TL'(10L),'Trip_TL_F'(10L),'F_TL_FFTime'(10L),'F_TL_Time'(10L),'F_TL_PcvTime'(12L),'F_TL_Dist'(10L),'F_TL_Toll'(10L),'F_TL_ONLY_Dist'(15L),'Toll_Const'(10L),'NTL_CMTime'(10L),'TL_CMTime'(10L), PRINTO=1
+      PRINT CSV=T,LIST='ITER'(5L),'I'(5L),'J'(5L),'NTL_FFTime'(10L),'NTL_Time'(10L),'TL_FFTime'(10L),'TL_Time'(10L),'NTL_Pcv_Time'(12L),'TL_Pcv_Time'(12L),'NTL_Dist'(10L),'TL_Dist'(10L),'TL_ONLY_Dist'(12L),'NTL_Toll'(10L),'TL_Toll'(10L),'Share'(10L),'Trip_TOT'(10L),'Trip_NTL'(10L),'Trip_TL'(10L),'Trip_TL_F'(10L),'F_TL_FFTime'(10L),'F_TL_Time'(10L),'F_TL_PcvTime'(12L),'F_TL_Dist'(10L),'F_TL_Toll'(10L),'F_TL_ONLY_Dist'(15L),'Toll_Const'(10L),PRINTO=1
     ENDIF
     IF (MW[1]>0)  ;Log only when there are trips between the zone pair
-      PRINT CSV=T,LIST=ITERATION(5.0),I(5.0),J(5.0),MW[15](10.4),MW[11](10.4),MW[25](10.4),MW[21](10.4),MW[14](10.4),MW[24](10.4),MW[12],MW[22],MW[26],MW[13],MW[23],MW[101](15.4),MW[1],MW[102],MW[104],MW[103],MW[75](10.4),MW[71](10.4),MW[74](10.4),MW[72],MW[73],MW[76],_TollConstant,, MW[17], MW[27],PRINTO=1
+      PRINT CSV=T,LIST=ITERATION(5.0),I(5.0),J(5.0),MW[15](10.4),MW[11](10.4),MW[25](10.4),MW[21](10.4),MW[14](10.4),MW[24](10.4),MW[12],MW[22],MW[26],MW[13],MW[23],MW[101](15.4),MW[1],MW[102],MW[104],MW[103],MW[75](10.4),MW[71](10.4),MW[74](10.4),MW[72],MW[73],MW[76],_TollConstant,PRINTO=1
     ENDIF
     ;HOV
     IF (ITERATION=1 && I=1 && J=1)  ;Write header in detail log file
@@ -2890,7 +2898,15 @@ FUNCTION {
  ;4 piece function: flat 0 for LOSA, linear increase to "min toll" for LOSA/LOSB transition, "min toll" for LOSB, dynamic curve for LOSC and worse
  
   IF (LW.TOLLSEGNUM>0)
-  
+  IF (LI.TOLLPOLICY == 1)
+      ;Toll curve
+      _TollRate = (LW.MINSEGTOLL + ({Max Per Segment Toll}-LW.MINSEGTOLL)*(V/C+{VC Toll Offset})^{Toll Exponent})
+      ;Adjust for max segment toll
+      _TollRate_adj = MIN(_TollRate, {Max Per Segment Toll})
+      ;Adjust for min segment toll 
+      _TollRate_Current = MAX(_TollRate_adj, LW.MINSEGTOLL)
+      
+  ELSE
     IF ((V/C)<{LOS A PriceInc VC})
     
       _TollRate = 0
@@ -2898,8 +2914,7 @@ FUNCTION {
       _TollRate_Current= 0
     
     ELSEIF ((V/C)<{LOS B VC})
-    
-    
+     
       _TollRate = (((V/C)-{LOS A PriceInc VC})/({LOS B VC}-{LOS A PriceInc VC}))*LW.MINSEGTOLL
       _TollRate_adj = _TollRate
       _TollRate_Current= _TollRate   
@@ -2922,16 +2937,19 @@ FUNCTION {
       ;Adjust for min segment toll 
       _TollRate_Current = MAX(_TollRate_adj, LW.MINSEGTOLL)
       ENDIF
-          
+ ENDIF         
     LW.TOLL = _TollRate_Current 
-  
+    
+ IF (LI.TOLLPOLICY == 1)
+    LW.TOLL_REV = LW.TOLL
+ ELSE
      ;Adjust toll used for calculating revenue if LOSA conditions or the EL speed was below the policy minimum    
     IF ((V/C) < {LOS B VC} || LW.SPD < {Policy Min EL Speed}) 
       LW.TOLL_REV = 0
     ELSE
       LW.TOLL_REV = LW.TOLL
     ENDIF
-    
+ ENDIF   
         PRINT CSV=T, LIST=ITERATION(5.0),A(5.0),B(5.0),LW.TOLLSEGNUM(10.0),_TollRate(15.2),_TollRate_adj(15.2),_TollRate_Current(15.2),LW.TOLL(15.2),LW.TOLL_REV(15.2),V/C(10.2),{Toll Exponent}(10.2),_MaxCorrection(15.2),PRINTO=2
 
   ENDIF
@@ -3000,7 +3018,7 @@ ELSE
 ENDIF
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\02HWY03G.S"
+; Script for program HIGHWAY in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\02HWY03G.S"
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN"
@@ -3296,7 +3314,15 @@ FUNCTION {
  ;4 piece function: flat 0 for LOSA, linear increase to "min toll" for LOSA/LOSB transition, "min toll" for LOSB, dynamic curve for LOSC and worse
  
   IF (LW.TOLLSEGNUM>0)
-  
+  IF (LI.TOLLPOLICY == 1)
+      ;Toll curve
+      _TollRate = (LW.MINSEGTOLL + ({Max Per Segment Toll}-LW.MINSEGTOLL)*(V/C+{VC Toll Offset})^{Toll Exponent})
+      ;Adjust for max segment toll
+      _TollRate_adj = MIN(_TollRate, {Max Per Segment Toll})
+      ;Adjust for min segment toll 
+      _TollRate_Current = MAX(_TollRate_adj, LW.MINSEGTOLL)
+      
+  ELSE
     IF ((V/C)<{LOS A PriceInc VC})
     
       _TollRate = 0
@@ -3304,8 +3330,7 @@ FUNCTION {
       _TollRate_Current= 0
     
     ELSEIF ((V/C)<{LOS B VC})
-    
-    
+     
       _TollRate = (((V/C)-{LOS A PriceInc VC})/({LOS B VC}-{LOS A PriceInc VC}))*LW.MINSEGTOLL
       _TollRate_adj = _TollRate
       _TollRate_Current= _TollRate   
@@ -3328,16 +3353,19 @@ FUNCTION {
       ;Adjust for min segment toll 
       _TollRate_Current = MAX(_TollRate_adj, LW.MINSEGTOLL)
       ENDIF
-          
+ ENDIF         
     LW.TOLL = _TollRate_Current 
-  
+    
+ IF (LI.TOLLPOLICY == 1)
+    LW.TOLL_REV = LW.TOLL
+ ELSE
      ;Adjust toll used for calculating revenue if LOSA conditions or the EL speed was below the policy minimum    
     IF ((V/C) < {LOS B VC} || LW.SPD < {Policy Min EL Speed}) 
       LW.TOLL_REV = 0
     ELSE
       LW.TOLL_REV = LW.TOLL
     ENDIF
-    
+ ENDIF   
         PRINT CSV=T, LIST=ITERATION(5.0),A(5.0),B(5.0),LW.TOLLSEGNUM(10.0),_TollRate(15.2),_TollRate_adj(15.2),_TollRate_Current(15.2),LW.TOLL(15.2),LW.TOLL_REV(15.2),V/C(10.2),{Toll Exponent}(10.2),_MaxCorrection(15.2),PRINTO=2
 
   ENDIF
@@ -3406,7 +3434,7 @@ ELSE
 ENDIF
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\02HWY03H.S"
+; Script for program HIGHWAY in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\02HWY03H.S"
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN"
@@ -3702,7 +3730,15 @@ FUNCTION {
  ;4 piece function: flat 0 for LOSA, linear increase to "min toll" for LOSA/LOSB transition, "min toll" for LOSB, dynamic curve for LOSC and worse
  
   IF (LW.TOLLSEGNUM>0)
-  
+  IF (LI.TOLLPOLICY == 1)
+      ;Toll curve
+      _TollRate = (LW.MINSEGTOLL + ({Max Per Segment Toll}-LW.MINSEGTOLL)*(V/C+{VC Toll Offset})^{Toll Exponent})
+      ;Adjust for max segment toll
+      _TollRate_adj = MIN(_TollRate, {Max Per Segment Toll})
+      ;Adjust for min segment toll 
+      _TollRate_Current = MAX(_TollRate_adj, LW.MINSEGTOLL)
+      
+  ELSE
     IF ((V/C)<{LOS A PriceInc VC})
     
       _TollRate = 0
@@ -3710,8 +3746,7 @@ FUNCTION {
       _TollRate_Current= 0
     
     ELSEIF ((V/C)<{LOS B VC})
-    
-    
+     
       _TollRate = (((V/C)-{LOS A PriceInc VC})/({LOS B VC}-{LOS A PriceInc VC}))*LW.MINSEGTOLL
       _TollRate_adj = _TollRate
       _TollRate_Current= _TollRate   
@@ -3734,16 +3769,19 @@ FUNCTION {
       ;Adjust for min segment toll 
       _TollRate_Current = MAX(_TollRate_adj, LW.MINSEGTOLL)
       ENDIF
-          
+ ENDIF         
     LW.TOLL = _TollRate_Current 
-  
+    
+ IF (LI.TOLLPOLICY == 1)
+    LW.TOLL_REV = LW.TOLL
+ ELSE
      ;Adjust toll used for calculating revenue if LOSA conditions or the EL speed was below the policy minimum    
     IF ((V/C) < {LOS B VC} || LW.SPD < {Policy Min EL Speed}) 
       LW.TOLL_REV = 0
     ELSE
       LW.TOLL_REV = LW.TOLL
     ENDIF
-    
+ ENDIF   
         PRINT CSV=T, LIST=ITERATION(5.0),A(5.0),B(5.0),LW.TOLLSEGNUM(10.0),_TollRate(15.2),_TollRate_adj(15.2),_TollRate_Current(15.2),LW.TOLL(15.2),LW.TOLL_REV(15.2),V/C(10.2),{Toll Exponent}(10.2),_MaxCorrection(15.2),PRINTO=2
 
   ENDIF
@@ -3889,12 +3927,14 @@ PRINT CSV=T, LIST= '  One Express Lane Time Weight'(50L), '{One Express Lane Tim
 
 LOOP HR = 1, 24, 1
 
-; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\01NET00C.S"
+; Script for program NETWORK in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\01NET00C.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
+;LOOP HR = 1, 24
+
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK
-FILEI LINKI[2] = "{Pull Link File}",
-VAR=A,B,PULLLINK,SEG
+;FILEI LINKI[2] = "{Pull Link File}",
+; VAR=A,B,PULLLINK,SEG
 FILEO PRINTO[1] = "{SCENARIO_DIR}\VOL@HR@.CSV"
 FILEI LINKI[1] = "{SCENARIO_DIR}\LOADED_HOUR@HR@.NET"
 
@@ -3905,16 +3945,23 @@ PHASE=LINKMERGE
   IF (_CNT = 1)
     PRINT CSV=T, LIST='A'(5R),'B'(5R),'TOTAL_VOL'(10R),'SOV_GU_VOL'(10R),'SOV_MLF_VOL'(15R),'SOV_MLT_VOL'(15R),'HOV_GU_VOL'(10R),'HOV_MLF_VOL'(15R),'HOV_MLT_VOL'(15R),'TRK_GU_VOL'(10R),'TRK_ML_VOL'(10R),'CSPD'(10R),'VC_RATIO'(10R),'TOLL'(10R),'TIME'(10R),PRINTO=1
   ENDIF
-  IF (LI.2.PULLLINK = 1)
-    PRINT CSV=T, LIST=A(5.0),B(5.0),V_1(10.0), V1_1(10.0), V2_1(15.0), V3_1(15.0), V4_1(10.0), V5_1(10.0),V6_1(15.0),V7_1(15.0), V8_1(10.0),
-        DISTANCE/LW_CGTIME_1*60(10.2), VC_1(10.2), LW_TOLL_REV_1(10.2), LW_CGTIME_1(15.6),PRINTO=1
-  ENDIF
+  ;IF (LI.2.PULLLINK = 1)
+    ;PRINT CSV=T, LIST=A(5.0),B(5.0),V_2(10.0), V1_2(10.0), V2_2(15.0), V3_2(15.0), V4_2(10.0), V5_2(10.0),V6_2(15.0),V7_2(15.0), V8_2(10.0),
+    ;    DISTANCE/LW_CGTIME_2*60(10.2), VC_2(10.2), LW_TOLL_REV_2(10.2), LW_CGTIME_2(15.6),PRINTO=1
+        
+     PRINT CSV=T, LIST=A(5.0),B(5.0),V_1(10.0), V1_1(10.0), V2_1(15.0), V3_1(15.0), V4_1(10.0), V5_1(10.0),V6_1(15.0),V7_1(15.0), V8_1(10.0),
+         DISTANCE/LW_CGTIME_1*60(10.2), VC_1(10.2), LW_TOLL_REV_1(10.2), LW_CGTIME_1(15.6),PRINTO=1
+  ;ENDIF
+
+
+
 ENDPHASE
 
 ENDRUN
 
+;ENDLOOP
 
-; Script for program MATRIX in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\01MAT00B.S"
+; Script for program MATRIX in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\01MAT00B.S"
 ;;<<Default Template>><<MATRIX>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=MATRIX
@@ -3937,7 +3984,7 @@ ENDRUN
 
 ENDLOOP
 
-; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00NET00K.S"
+; Script for program NETWORK in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00NET00K.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='AM'
@@ -3999,7 +4046,7 @@ TIME_HR10 = LI.3.LW_CGTIME_1
 ENDRUN
 
 
-; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00NET00L.S"
+; Script for program NETWORK in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00NET00L.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='PM'
@@ -4061,7 +4108,7 @@ TIME_HR19 = LI.3.LW_CGTIME_1
 ENDRUN
 
 
-; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00NET00M.S"
+; Script for program NETWORK in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00NET00M.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='MD'
@@ -4155,7 +4202,7 @@ TIME_HR16 = LI.6.LW_CGTIME_1
 ENDRUN
 
 
-; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00NET00N.S"
+; Script for program NETWORK in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00NET00N.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='NT1'
@@ -4241,7 +4288,7 @@ TIME_HR24 = LI.5.LW_CGTIME_1
 ENDRUN
 
 
-; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00NET00O.S"
+; Script for program NETWORK in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00NET00O.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='NT2'
@@ -4347,7 +4394,7 @@ TIME_HR7 = LI.7.LW_CGTIME_1
 ENDRUN
 
 
-; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00NET00P.S"
+; Script for program NETWORK in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00NET00P.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='NT'
@@ -4368,11 +4415,10 @@ NT_TOT = NT_SOV + NT_HOV + NT_TRK
 ENDRUN
 
 
-; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\00NET00Q.S"
+; Script for program NETWORK in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00NET00Q.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='Final Daily Loaded Network'
-FILEI LINKI[5] = "{CATALOG_DIR}\Input\2020\Profile_Counts_Dir_Counts.dbf"
 FILEI LINKI[4] = "{SCENARIO_DIR}\LOADED_NT.NET"
 FILEO NETO = "{SCENARIO_DIR}\LOADED_DY.NET",
 EXCLUDE=HRCAP,FFSPD,TOLL,TIME1,TIME2,LINKGRP1,LINKGRP2,LINKGRP3,ASGNGRP,USER,COST,TWOWAY,
@@ -4393,7 +4439,7 @@ DY_TOT = DY_SOV + DY_HOV + DY_TRK
 ENDRUN
 
 
-; Script for program NETWORK in file "M:\Projects\Veterans ELToDv2.3 2017-0628_PDNE\APP\01NET00F.S"
+; Script for program NETWORK in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\01NET00F.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='Convert Daily Loaded Network to Shape file'

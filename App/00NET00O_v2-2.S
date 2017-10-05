@@ -1,4 +1,3 @@
-; Script for program NETWORK in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00NET00O.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='NT2'
@@ -102,5 +101,3 @@ TIME_HR7 = LI.7.LW_CGTIME_2
 ;V_HR7_SL = LI.7.V11_1+LI.7.V12_1+LI.7.V13_1+LI.7.V14_1+LI.7.V15_1+LI.7.V16_1+LI.7.V17_1+LI.7.V18_1
 ;NT2_TOT_SL = V_HR1_SL+V_HR2_SL+V_HR3_SL+V_HR4_SL+V_HR5_SL+V_HR6_SL+V_HR7_SL
 ENDRUN
-
-

@@ -5,8 +5,6 @@ ELSEIF('{Trip Table Type}'='Hourly')
   Trip_Table = 2
 ELSEIF('{Trip Table Type}'='PK_OP')
   Trip_Table = 3
-ELSEIF('{Trip Table Type}'='ODME')
-  Trip_Table = 4
 ENDIF
 
 

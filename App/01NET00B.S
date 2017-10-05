@@ -9,7 +9,7 @@ VAR=A,B,HRCAP,FFSPD
 FILEI LINKI[3] = "{Express Lane Link File}",
 VAR=A,B,FTYPE
 FILEI LINKI[2] = "{Toll Link File}",
-VAR=A,B,TOLLSEGNUM,TOLLSEGLEN,MINSEGTOLL
+VAR=A,B,TOLLSEGNUM,TOLLSEGLEN,MINSEGTOLL,POLICY
 FILEO NETO = "{SCENARIO_DIR}\Assign_Input_Net_1.NET",
 INCLUDE = TOLLSEGNUM,TOLLSEGLEN,MINSEGTOLL,DISTANCE,SPEED,NUM_LANES,FTYPE,CAPACITY,DIR1,DIR2,DIR3,DIR4
 FILEI LINKI[1] = "{Network}"
@@ -21,7 +21,13 @@ _Cnt=_Cnt+1
 
 IF (_Cnt=1)
   PRINT CSV=T, LIST='A,B,DISTANCE,NUMBER OF LANES,FACILITY TYPE,FREE FLOW SPEED,CAPACITY PER LANE',PRINTO=1
-  
+ENDIF
+
+;Toll policy
+IF(LI.2.POLICY>0)
+  TOLLPOLICY = LI.2.POLICY
+ELSE
+  TOLLPOLICY = 0
 ENDIF
 
 ;Toll segment number
@@ -45,12 +51,12 @@ ENDIF
 IF({Distance}=0)
   DISTANCE=0.001
 ELSE
-  DISTANCE = {Distance};/100
+  DISTANCE ={Distance};/100
 ENDIF
 
 ;Number of Lanes
 IF({Number of Lanes}=0)
-  NUM_LANES = 0 ;1
+  NUM_LANES = 1;0 ;1
 ELSE
   NUM_LANES = {Number of Lanes}
 ENDIF
@@ -58,19 +64,19 @@ ENDIF
 IF({Number of Lanes}=0) ABORT MSG='***Number of Lanes = 0 - Review Network File***'
 
 ;Facility Type
-IF(LI.3.Ftype=91)
-  FTYPE = 91
-ELSEIF({Facility Type}=0)
-  FTYPE = 52
-ELSEIF({Facility Type}=90)
-  FTYPE = 10
-ELSE
-  FTYPE = {Facility Type}
-ENDIF
+;IF(LI.3.FTYPE=96)
+;  FTYPE = 96
+;ELSEIF({Facility Type}=0)
+;  FTYPE = 52
+;ELSEIF({Facility Type}=90)
+;  FTYPE = 10
+;ELSE
+;  FTYPE = {Facility Type}
+;ENDIF
 
 ;Free Flow Speed
-IF({Free Flow Speed}>0)
-  SPEED = {Free Flow Speed}
+IF({Free Flow Speed}==0)
+  SPEED = 25
 /*ELSEIF(LI.1.TIME2=0)
   SPEED = 999*/
 ELSE
@@ -84,11 +90,6 @@ ELSEIF(LI.4.HRCAP>0)
   CAPACITY = LI.4.HRCAP
 ELSE
   CAPACITY = {Capacity per Lane};/10/LI.1.NUM_LANES
-ENDIF
-
-; Manual overwrite
-IF(LI.1.Ftype=96)
-    CAPACITY = 1850 
 ENDIF
 
 ;DIR
