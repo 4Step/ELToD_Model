@@ -1,3 +1,0 @@
-v2.3 incorporates new pricing policy
-v2.3.1 switch for previous or new policy
-v2.3.2 allows for the selection of the previous or new pricing policy by segment

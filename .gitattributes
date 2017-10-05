@@ -5,10 +5,10 @@
 *.cs     diff=csharp
 
 # Standard to msysgit
-*.doc diff=astextplain
-*.DOC diff=astextplain
-*.docx diff=astextplain
-*.DOCX diff=astextplain
+*.doc diff=word
+*.DOC diff=word
+*.docx diff=word
+*.DOCX diff=word
 *.dot diff=astextplain
 *.DOT diff=astextplain
 *.pdf diff=astextplain
@@ -16,14 +16,12 @@
 *.rtf diff=astextplain
 *.RTF diff=astextplain
 
-# Ignore network, catalog and App files
-*.APP -text
-*.app -text
-*.CAT -text
-*.cat -text
-*.NET -text
-*.net -text
-*.MAT -text
-*.mat -text
-*.REP -text
+# Network, catalog and App files as binary
+*.CAT binary
+*.cat binary
+*.NET binary
+*.net binary
+*.MAT binary
+*.mat binary
+*.REP binary
 
