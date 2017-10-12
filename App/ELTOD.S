@@ -1,5 +1,5 @@
 Trip_Table=-1
-; Script for program NETWORK in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\01NET00B.S"
+; Script for program NETWORK in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\01NET00B.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='Network for Assignment'
@@ -115,7 +115,7 @@ PRINT CSV=T, LIST=A(10.0L),B(10.0L),{Distance}(10.4L),{Number of Lanes}(5.0L),{F
 ENDRUN
 
 
-; Script for program HIGHWAY in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\01HWY00E.S"
+; Script for program HIGHWAY in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\01HWY00E.S"
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=HIGHWAY MSG='Directional Matrix'
 FILEO MATO[1] = "{SCENARIO_DIR}\Dir.MAT",
@@ -136,7 +136,7 @@ ENDPROCESS
 ENDRUN
 
 
-; Script for program NETWORK in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\01NET00D.S"
+; Script for program NETWORK in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\01NET00D.S"
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='Toll Link Distance'
 FILEO NETO = "{SCENARIO_DIR}\Assign_Input_Net.NET"
@@ -193,7 +193,7 @@ LOOP IterNum = 1, 24, 1
 
 ; End of PILOT Script
 
-; Script for program MATRIX in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\App\00MAT00A.S"
+; Script for program MATRIX in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\App\00MAT00A.S"
 ;;<<Default Template>><<MATRIX>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=MATRIX
@@ -292,7 +292,7 @@ goto Trip_Table_END
 *Del "{SCENARIO_DIR}\Log_Trip_Table_Totals.csv"
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00HWY02B.S"
+; Script for program HIGHWAY in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\00HWY02B.S"
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=HIGHWAY
 FILEO MATO[1] = "{SCENARIO_DIR}\Dir2.MAT",
@@ -329,7 +329,7 @@ LOOP HR = 1, 24, 1
 ; PILOT Script
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 
-IF (HR=8-10)
+IF (HR=6-8)
   TP = 'AM'
 ELSEIF (HR=16-18)
   TP = 'PM'
@@ -339,7 +339,7 @@ ENDIF
 ;*COPY "{Trip Table}Trip Table *.MAT" "{SCENARIO_DIR}"
 ; End of PILOT Script
 
-; Script for program MATRIX in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00MAT02C.S"
+; Script for program MATRIX in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\00MAT02C.S"
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=MATRIX
 FILEO PRINTO[1] = "{SCENARIO_DIR}\Log_Trip_Table_Totals.csv",
@@ -397,7 +397,7 @@ ENDRUN
 
 ENDLOOP
 
-; Script for program MATRIX in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00MAT02D.S"
+; Script for program MATRIX in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\00MAT02D.S"
 ;;<<Default Template>><<MATRIX>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=MATRIX MSG='Add to AM OD for checking - Part 1 - 4'
@@ -417,7 +417,7 @@ MW[3]= MI.1.3 + MI.2.3 + MI.3.3 ; TRK
 ENDRUN
 
 
-; Script for program MATRIX in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00MAT02E.S"
+; Script for program MATRIX in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\00MAT02E.S"
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=MATRIX MSG='Add to PM OD for checking - Part 2 - 4'
 FILEI MATI[3] = "{SCENARIO_DIR}\Trip Table 19.MAT"
@@ -435,7 +435,7 @@ MW[3]= MI.1.3 + MI.2.3 + MI.3.3 ; TRK
 ENDRUN
 
 
-; Script for program MATRIX in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00MAT02F.S"
+; Script for program MATRIX in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\00MAT02F.S"
 ;;<<Default Template>><<MATRIX>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=MATRIX MSG='Add to OP OD for checking - Part 3 - 4'
@@ -471,10 +471,10 @@ MW[3]= MI.1.3 + MI.2.3 + MI.3.3 + MI.4.3 + MI.5.3 + MI.6.3 + MI.7.3 + MI.8.3 + M
 ENDRUN
 
 
-; Script for program MATRIX in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00MAT02G.S"
+; Script for program MATRIX in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\00MAT02G.S"
 ;;<<Default Template>><<MATRIX>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
-RUN PGM=MATRIX PRNFILE="M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00MAT02A.PRN" MSG='Add to Daily OD for checking - Part 4 - 4'
+RUN PGM=MATRIX PRNFILE="M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\00MAT02A.PRN" MSG='Add to Daily OD for checking - Part 4 - 4'
 FILEO MATO[1] = "{SCENARIO_DIR}\Trip Table Daily.MAT",
     MO=1-3,NAME=SOV,HOV,TRK
 FILEI MATI[3] = "{SCENARIO_DIR}\Trip Table OP.MAT"
@@ -516,7 +516,7 @@ ELSE
 ENDIF
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\02HWY03A.S"
+; Script for program HIGHWAY in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\02HWY03A.S"
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN" MSG='Highway Assignment'
@@ -780,10 +780,10 @@ V = VOL[1]+VOL[2]+VOL[3]+VOL[4]+VOL[5]+VOL[6]+VOL[7]+VOL[8]
 ;Users should update formula if using link-specific BPR coefficients 
 FUNCTION {
 
-    TC[1] = _Akcelik * (T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)) + _BPR * (T0*(1+{BPR Alpha}*(V/C)^{BPR Beta}))
+    TC[1] = _Akcelik * (T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)) + _BPR * (T0*(1+{BPR Alpha}*(V/C)^{BPR Beta})) + li.delay
         
 }
- 
+ ;2017-1011-JKlodzinski, added "+ li.delay" above to the Function TC{1}, at the end of...^{BPR Beta})), in an attempt to reduce the possible U-turn issue.
     ;Constrained speed used in Dummy Path
     LW.SPD = MAX(DISTANCE/LW.CGTIME*60,{Min Link Congested Speed})
   ;;;
@@ -932,10 +932,10 @@ ELSE
 ENDIF
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\02HWY03B.S"
+; Script for program HIGHWAY in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\02HWY03B.S"
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
-RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN"
+RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN" MSG='Highway Assignment'
 FILEI MATI[2] = "{SCENARIO_DIR}\Dir.MAT"
 FILEO PRINTO[4] = "{SCENARIO_DIR}\VDF@HR@.PRN"
 FILEO PRINTO[3] = "{SCENARIO_DIR}\RUNDETAIL_HOV@HR@.PRN"
@@ -1196,10 +1196,10 @@ V = VOL[1]+VOL[2]+VOL[3]+VOL[4]+VOL[5]+VOL[6]+VOL[7]+VOL[8]
 ;Users should update formula if using link-specific BPR coefficients 
 FUNCTION {
 
-    TC[1] = _Akcelik * (T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)) + _BPR * (T0*(1+{BPR Alpha}*(V/C)^{BPR Beta}))
+    TC[1] = _Akcelik * (T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)) + _BPR * (T0*(1+{BPR Alpha}*(V/C)^{BPR Beta})) + li.delay
         
 }
- 
+ ;2017-1011-JKlodzinski, added "+ li.delay" above to the Function TC{1}, at the end of...^{BPR Beta})), in an attempt to reduce the possible U-turn issue.
     ;Constrained speed used in Dummy Path
     LW.SPD = MAX(DISTANCE/LW.CGTIME*60,{Min Link Congested Speed})
   ;;;
@@ -1348,10 +1348,10 @@ ELSE
 ENDIF
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\02HWY03C.S"
+; Script for program HIGHWAY in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\02HWY03C.S"
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
-RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN"
+RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN" MSG='Highway Assignment'
 FILEI MATI[2] = "{SCENARIO_DIR}\Dir.MAT"
 FILEO PRINTO[4] = "{SCENARIO_DIR}\VDF@HR@.PRN"
 FILEO PRINTO[3] = "{SCENARIO_DIR}\RUNDETAIL_HOV@HR@.PRN"
@@ -1488,20 +1488,14 @@ PROCESS PHASE=ILOOP
         MW[201] = 0   ;SOV toll charged
         MW[202] = 0   ;Revenue
       ELSE  ;Forced toll path
-      ;MW[101] = 1/(1+EXP(-1* _TollConstant -{Travel Time Coefficient}*(MW[77]-MW[17])-{Toll Coefficient}*(MW[73]-MW[13])-{Reliability Coefficient}*{Travel Time Coefficient}*{Reliability Time Coefficient}*((MW[15]-MW[11])*MW[12]^(-1*{Reliability Distance Coefficient})-(MW[75]-MW[71])*MW[72]^(-1*{Reliability Distance Coefficient}))+MIN(MAX({Distance Penalty Y}-{Distance Penalty Y}*(MW[76]-{Distance Penalty X1})/({Distance Penalty X2}-{Distance Penalty X1}),0),{Distance Penalty Y})))
-      
-            MW[101] = 1/(1+EXP(-1* -1.19273 -{Travel Time Coefficient}*(MW[77]-MW[17])-{Toll Coefficient}*(MW[73]-MW[13])-{Reliability Coefficient}*{Travel Time Coefficient}*{Reliability Time Coefficient}*((MW[15]-MW[11])*MW[12]^(-1*{Reliability Distance Coefficient})-(MW[75]-MW[71])*MW[72]^(-1*{Reliability Distance Coefficient}))+MIN(MAX({Distance Penalty Y}-{Distance Penalty Y}*(MW[76]-{Distance Penalty X1})/({Distance Penalty X2}-{Distance Penalty X1}),0),{Distance Penalty Y})))
-            
+      MW[101] = 1/(1+EXP(-1*_TollConstant-{Travel Time Coefficient}*(MW[77]-MW[17])-{Toll Coefficient}*(MW[73]-MW[13])-{Reliability Coefficient}*{Travel Time Coefficient}*{Reliability Time Coefficient}*((MW[15]-MW[11])*MW[12]^(-1*{Reliability Distance Coefficient})-(MW[75]-MW[71])*MW[72]^(-1*{Reliability Distance Coefficient}))+MIN(MAX({Distance Penalty Y}-{Distance Penalty Y}*(MW[76]-{Distance Penalty X1})/({Distance Penalty X2}-{Distance Penalty X1}),0),{Distance Penalty Y})))
       MW[102] = MW[1] * (1-MW[101])   ;GU trip table
       MW[103] = MW[1] - MW[102]       ;ML trip table
       MW[201] = MW[373]                ;SOV toll charged
       MW[202] = MW[201]*MW[103]       ;Revenue
       ENDIF
     ELSE  ;Time based toll path
-      ; MW[101] = 1/(1+EXP(-1*_TollConstant-{Travel Time Coefficient}*(MW[27]-MW[17])-{Toll Coefficient}*(MW[23]-MW[13])-{Reliability Coefficient}*{Travel Time Coefficient}*{Reliability Time Coefficient}*((MW[15]-MW[11])*MW[12]^(-1*{Reliability Distance Coefficient})-(MW[25]-MW[21])*MW[22]^(-1*{Reliability Distance Coefficient}))+MIN(MAX({Distance Penalty Y}-{Distance Penalty Y}*(MW[26]-{Distance Penalty X1})/({Distance Penalty X2}-{Distance Penalty X1}),0),{Distance Penalty Y})))  
-      
-            MW[101] = 1/(1+EXP(-1* -1.19273 -{Travel Time Coefficient}*(MW[27]-MW[17])-{Toll Coefficient}*(MW[23]-MW[13])-{Reliability Coefficient}*{Travel Time Coefficient}*{Reliability Time Coefficient}*((MW[15]-MW[11])*MW[12]^(-1*{Reliability Distance Coefficient})-(MW[25]-MW[21])*MW[22]^(-1*{Reliability Distance Coefficient}))+MIN(MAX({Distance Penalty Y}-{Distance Penalty Y}*(MW[26]-{Distance Penalty X1})/({Distance Penalty X2}-{Distance Penalty X1}),0),{Distance Penalty Y})))  
-            
+      MW[101] = 1/(1+EXP(-1*_TollConstant-{Travel Time Coefficient}*(MW[27]-MW[17])-{Toll Coefficient}*(MW[23]-MW[13])-{Reliability Coefficient}*{Travel Time Coefficient}*{Reliability Time Coefficient}*((MW[15]-MW[11])*MW[12]^(-1*{Reliability Distance Coefficient})-(MW[25]-MW[21])*MW[22]^(-1*{Reliability Distance Coefficient}))+MIN(MAX({Distance Penalty Y}-{Distance Penalty Y}*(MW[26]-{Distance Penalty X1})/({Distance Penalty X2}-{Distance Penalty X1}),0),{Distance Penalty Y})))  
       MW[102] = MW[1] * (1-MW[101])   ;GU trip table
       MW[104] = MW[1] - MW[102]       ;ML trip table
       MW[201] = MW[323]                ;SOV toll charged
@@ -1618,10 +1612,10 @@ V = VOL[1]+VOL[2]+VOL[3]+VOL[4]+VOL[5]+VOL[6]+VOL[7]+VOL[8]
 ;Users should update formula if using link-specific BPR coefficients 
 FUNCTION {
 
-    TC[1] = _Akcelik * (T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)) + _BPR * (T0*(1+{BPR Alpha}*(V/C)^{BPR Beta}))
+    TC[1] = _Akcelik * (T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)) + _BPR * (T0*(1+{BPR Alpha}*(V/C)^{BPR Beta})) + li.delay
         
 }
- 
+ ;2017-1011-JKlodzinski, added "+ li.delay" above to the Function TC{1}, at the end of...^{BPR Beta})), in an attempt to reduce the possible U-turn issue.
     ;Constrained speed used in Dummy Path
     LW.SPD = MAX(DISTANCE/LW.CGTIME*60,{Min Link Congested Speed})
   ;;;
@@ -1770,10 +1764,10 @@ ELSE
 ENDIF
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\02HWY03D.S"
+; Script for program HIGHWAY in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\02HWY03D.S"
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
-RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN"
+RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN" MSG='Highway Assignment'
 FILEI MATI[2] = "{SCENARIO_DIR}\Dir.MAT"
 FILEO PRINTO[4] = "{SCENARIO_DIR}\VDF@HR@.PRN"
 FILEO PRINTO[3] = "{SCENARIO_DIR}\RUNDETAIL_HOV@HR@.PRN"
@@ -2034,10 +2028,10 @@ V = VOL[1]+VOL[2]+VOL[3]+VOL[4]+VOL[5]+VOL[6]+VOL[7]+VOL[8]
 ;Users should update formula if using link-specific BPR coefficients 
 FUNCTION {
 
-    TC[1] = _Akcelik * (T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)) + _BPR * (T0*(1+{BPR Alpha}*(V/C)^{BPR Beta}))
+    TC[1] = _Akcelik * (T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)) + _BPR * (T0*(1+{BPR Alpha}*(V/C)^{BPR Beta})) + li.delay
         
 }
- 
+ ;2017-1011-JKlodzinski, added "+ li.delay" above to the Function TC{1}, at the end of...^{BPR Beta})), in an attempt to reduce the possible U-turn issue.
     ;Constrained speed used in Dummy Path
     LW.SPD = MAX(DISTANCE/LW.CGTIME*60,{Min Link Congested Speed})
   ;;;
@@ -2186,10 +2180,10 @@ ELSE
 ENDIF
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\02HWY03E.S"
+; Script for program HIGHWAY in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\02HWY03E.S"
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
-RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN"
+RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN" MSG='Highway Assignment'
 FILEI MATI[2] = "{SCENARIO_DIR}\Dir.MAT"
 FILEO PRINTO[4] = "{SCENARIO_DIR}\VDF@HR@.PRN"
 FILEO PRINTO[3] = "{SCENARIO_DIR}\RUNDETAIL_HOV@HR@.PRN"
@@ -2450,10 +2444,10 @@ V = VOL[1]+VOL[2]+VOL[3]+VOL[4]+VOL[5]+VOL[6]+VOL[7]+VOL[8]
 ;Users should update formula if using link-specific BPR coefficients 
 FUNCTION {
 
-    TC[1] = _Akcelik * (T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)) + _BPR * (T0*(1+{BPR Alpha}*(V/C)^{BPR Beta}))
+    TC[1] = _Akcelik * (T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)) + _BPR * (T0*(1+{BPR Alpha}*(V/C)^{BPR Beta})) + li.delay
         
 }
- 
+ ;2017-1011-JKlodzinski, added "+ li.delay" above to the Function TC{1}, at the end of...^{BPR Beta})), in an attempt to reduce the possible U-turn issue.
     ;Constrained speed used in Dummy Path
     LW.SPD = MAX(DISTANCE/LW.CGTIME*60,{Min Link Congested Speed})
   ;;;
@@ -2602,10 +2596,10 @@ ELSE
 ENDIF
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\02HWY03F.S"
+; Script for program HIGHWAY in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\02HWY03F.S"
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
-RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN"
+RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN" MSG='Highway Assignment'
 FILEI MATI[2] = "{SCENARIO_DIR}\Dir.MAT"
 FILEO PRINTO[4] = "{SCENARIO_DIR}\VDF@HR@.PRN"
 FILEO PRINTO[3] = "{SCENARIO_DIR}\RUNDETAIL_HOV@HR@.PRN"
@@ -2866,10 +2860,10 @@ V = VOL[1]+VOL[2]+VOL[3]+VOL[4]+VOL[5]+VOL[6]+VOL[7]+VOL[8]
 ;Users should update formula if using link-specific BPR coefficients 
 FUNCTION {
 
-    TC[1] = _Akcelik * (T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)) + _BPR * (T0*(1+{BPR Alpha}*(V/C)^{BPR Beta}))
+    TC[1] = _Akcelik * (T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)) + _BPR * (T0*(1+{BPR Alpha}*(V/C)^{BPR Beta})) + li.delay
         
 }
- 
+ ;2017-1011-JKlodzinski, added "+ li.delay" above to the Function TC{1}, at the end of...^{BPR Beta})), in an attempt to reduce the possible U-turn issue.
     ;Constrained speed used in Dummy Path
     LW.SPD = MAX(DISTANCE/LW.CGTIME*60,{Min Link Congested Speed})
   ;;;
@@ -3018,10 +3012,10 @@ ELSE
 ENDIF
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\02HWY03G.S"
+; Script for program HIGHWAY in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\02HWY03G.S"
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
-RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN"
+RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN" MSG='Highway Assignment'
 FILEI MATI[2] = "{SCENARIO_DIR}\Dir.MAT"
 FILEO PRINTO[4] = "{SCENARIO_DIR}\VDF@HR@.PRN"
 FILEO PRINTO[3] = "{SCENARIO_DIR}\RUNDETAIL_HOV@HR@.PRN"
@@ -3282,10 +3276,10 @@ V = VOL[1]+VOL[2]+VOL[3]+VOL[4]+VOL[5]+VOL[6]+VOL[7]+VOL[8]
 ;Users should update formula if using link-specific BPR coefficients 
 FUNCTION {
 
-    TC[1] = _Akcelik * (T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)) + _BPR * (T0*(1+{BPR Alpha}*(V/C)^{BPR Beta}))
+    TC[1] = _Akcelik * (T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)) + _BPR * (T0*(1+{BPR Alpha}*(V/C)^{BPR Beta})) + li.delay
         
 }
- 
+ ;2017-1011-JKlodzinski, added "+ li.delay" above to the Function TC{1}, at the end of...^{BPR Beta})), in an attempt to reduce the possible U-turn issue.
     ;Constrained speed used in Dummy Path
     LW.SPD = MAX(DISTANCE/LW.CGTIME*60,{Min Link Congested Speed})
   ;;;
@@ -3434,10 +3428,10 @@ ELSE
 ENDIF
 ; End of PILOT Script
 
-; Script for program HIGHWAY in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\02HWY03H.S"
+; Script for program HIGHWAY in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\02HWY03H.S"
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
-RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN"
+RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN" MSG='Highway Assignment'
 FILEI MATI[2] = "{SCENARIO_DIR}\Dir.MAT"
 FILEO PRINTO[4] = "{SCENARIO_DIR}\VDF@HR@.PRN"
 FILEO PRINTO[3] = "{SCENARIO_DIR}\RUNDETAIL_HOV@HR@.PRN"
@@ -3698,10 +3692,10 @@ V = VOL[1]+VOL[2]+VOL[3]+VOL[4]+VOL[5]+VOL[6]+VOL[7]+VOL[8]
 ;Users should update formula if using link-specific BPR coefficients 
 FUNCTION {
 
-    TC[1] = _Akcelik * (T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)) + _BPR * (T0*(1+{BPR Alpha}*(V/C)^{BPR Beta}))
+    TC[1] = _Akcelik * (T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)) + _BPR * (T0*(1+{BPR Alpha}*(V/C)^{BPR Beta})) + li.delay
         
 }
- 
+ ;2017-1011-JKlodzinski, added "+ li.delay" above to the Function TC{1}, at the end of...^{BPR Beta})), in an attempt to reduce the possible U-turn issue.
     ;Constrained speed used in Dummy Path
     LW.SPD = MAX(DISTANCE/LW.CGTIME*60,{Min Link Congested Speed})
   ;;;
@@ -3927,14 +3921,15 @@ PRINT CSV=T, LIST= '  One Express Lane Time Weight'(50L), '{One Express Lane Tim
 
 LOOP HR = 1, 24, 1
 
-; Script for program NETWORK in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\01NET00C.S"
+; Script for program NETWORK in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\01NET00C.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ;LOOP HR = 1, 24
 
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK
-;FILEI LINKI[2] = "{Pull Link File}",
-; VAR=A,B,PULLLINK,SEG
+;FILEI LINKI[2] = "{Pull Link File}"
+FILEI LINKI[2] = "{Pull Link File}",
+ VAR=A,B,PULLLINK,SEG
 FILEO PRINTO[1] = "{SCENARIO_DIR}\VOL@HR@.CSV"
 FILEI LINKI[1] = "{SCENARIO_DIR}\LOADED_HOUR@HR@.NET"
 
@@ -3945,13 +3940,13 @@ PHASE=LINKMERGE
   IF (_CNT = 1)
     PRINT CSV=T, LIST='A'(5R),'B'(5R),'TOTAL_VOL'(10R),'SOV_GU_VOL'(10R),'SOV_MLF_VOL'(15R),'SOV_MLT_VOL'(15R),'HOV_GU_VOL'(10R),'HOV_MLF_VOL'(15R),'HOV_MLT_VOL'(15R),'TRK_GU_VOL'(10R),'TRK_ML_VOL'(10R),'CSPD'(10R),'VC_RATIO'(10R),'TOLL'(10R),'TIME'(10R),PRINTO=1
   ENDIF
-  ;IF (LI.2.PULLLINK = 1)
-    ;PRINT CSV=T, LIST=A(5.0),B(5.0),V_2(10.0), V1_2(10.0), V2_2(15.0), V3_2(15.0), V4_2(10.0), V5_2(10.0),V6_2(15.0),V7_2(15.0), V8_2(10.0),
-    ;    DISTANCE/LW_CGTIME_2*60(10.2), VC_2(10.2), LW_TOLL_REV_2(10.2), LW_CGTIME_2(15.6),PRINTO=1
+  IF (LI.2.PULLLINK = 1)
+    PRINT CSV=T, LIST=A(5.0),B(5.0),V_2(10.0), V1_2(10.0), V2_2(15.0), V3_2(15.0), V4_2(10.0), V5_2(10.0),V6_2(15.0),V7_2(15.0), V8_2(10.0),
+        DISTANCE/LW_CGTIME_2*60(10.2), VC_2(10.2), LW_TOLL_REV_2(10.2), LW_CGTIME_2(15.6),PRINTO=1
         
-     PRINT CSV=T, LIST=A(5.0),B(5.0),V_1(10.0), V1_1(10.0), V2_1(15.0), V3_1(15.0), V4_1(10.0), V5_1(10.0),V6_1(15.0),V7_1(15.0), V8_1(10.0),
-         DISTANCE/LW_CGTIME_1*60(10.2), VC_1(10.2), LW_TOLL_REV_1(10.2), LW_CGTIME_1(15.6),PRINTO=1
-  ;ENDIF
+    ; PRINT CSV=T, LIST=A(5.0),B(5.0),V_1(10.0), V1_1(10.0), V2_1(15.0), V3_1(15.0), V4_1(10.0), V5_1(10.0),V6_1(15.0),V7_1(15.0), V8_1(10.0),
+    ;    DISTANCE/LW_CGTIME_1*60(10.2), VC_1(10.2), LW_TOLL_REV_1(10.2), LW_CGTIME_1(15.6),PRINTO=1
+  ENDIF
 
 
 
@@ -3959,9 +3954,8 @@ ENDPHASE
 
 ENDRUN
 
-;ENDLOOP
 
-; Script for program MATRIX in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\01MAT00B.S"
+; Script for program MATRIX in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\01MAT00B.S"
 ;;<<Default Template>><<MATRIX>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=MATRIX
@@ -3984,7 +3978,7 @@ ENDRUN
 
 ENDLOOP
 
-; Script for program NETWORK in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00NET00K.S"
+; Script for program NETWORK in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\00NET00K.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='AM'
@@ -4046,7 +4040,7 @@ TIME_HR10 = LI.3.LW_CGTIME_1
 ENDRUN
 
 
-; Script for program NETWORK in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00NET00L.S"
+; Script for program NETWORK in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\00NET00L.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='PM'
@@ -4108,7 +4102,7 @@ TIME_HR19 = LI.3.LW_CGTIME_1
 ENDRUN
 
 
-; Script for program NETWORK in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00NET00M.S"
+; Script for program NETWORK in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\00NET00M.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='MD'
@@ -4202,7 +4196,7 @@ TIME_HR16 = LI.6.LW_CGTIME_1
 ENDRUN
 
 
-; Script for program NETWORK in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00NET00N.S"
+; Script for program NETWORK in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\00NET00N.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='NT1'
@@ -4288,7 +4282,7 @@ TIME_HR24 = LI.5.LW_CGTIME_1
 ENDRUN
 
 
-; Script for program NETWORK in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00NET00O.S"
+; Script for program NETWORK in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\00NET00O.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='NT2'
@@ -4394,7 +4388,7 @@ TIME_HR7 = LI.7.LW_CGTIME_1
 ENDRUN
 
 
-; Script for program NETWORK in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00NET00P.S"
+; Script for program NETWORK in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\00NET00P.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='NT'
@@ -4415,7 +4409,7 @@ NT_TOT = NT_SOV + NT_HOV + NT_TRK
 ENDRUN
 
 
-; Script for program NETWORK in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\00NET00Q.S"
+; Script for program NETWORK in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\00NET00Q.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='Final Daily Loaded Network'
@@ -4439,7 +4433,7 @@ DY_TOT = DY_SOV + DY_HOV + DY_TRK
 ENDRUN
 
 
-; Script for program NETWORK in file "M:\Projects\BLW I-4 impacts ELToDv2.3 2017\APP\01NET00F.S"
+; Script for program NETWORK in file "M:\Projects\D5-Colonial Parkway 2017\900 CAD GIS Modeling\940 Modeling\ELToD Model\APP\01NET00F.S"
 ;;<<Default Template>><<NETWORK>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
 RUN PGM=NETWORK MSG='Convert Daily Loaded Network to Shape file'

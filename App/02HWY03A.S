@@ -261,10 +261,10 @@ V = VOL[1]+VOL[2]+VOL[3]+VOL[4]+VOL[5]+VOL[6]+VOL[7]+VOL[8]
 ;Users should update formula if using link-specific BPR coefficients 
 FUNCTION {
 
-    TC[1] = _Akcelik * (T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)) + _BPR * (T0*(1+{BPR Alpha}*(V/C)^{BPR Beta}))
+    TC[1] = _Akcelik * (T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)) + _BPR * (T0*(1+{BPR Alpha}*(V/C)^{BPR Beta})) + li.delay
         
 }
- 
+ ;2017-1011-JKlodzinski, added "+ li.delay" above to the Function TC{1}, at the end of...^{BPR Beta})), in an attempt to reduce the possible U-turn issue.
     ;Constrained speed used in Dummy Path
     LW.SPD = MAX(DISTANCE/LW.CGTIME*60,{Min Link Congested Speed})
   ;;;

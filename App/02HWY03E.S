@@ -1,6 +1,6 @@
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
-RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN"
+RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN" MSG='Highway Assignment'
 FILEI MATI[2] = "{SCENARIO_DIR}\Dir.MAT"
 FILEO PRINTO[4] = "{SCENARIO_DIR}\VDF@HR@.PRN"
 FILEO PRINTO[3] = "{SCENARIO_DIR}\RUNDETAIL_HOV@HR@.PRN"
@@ -261,10 +261,10 @@ V = VOL[1]+VOL[2]+VOL[3]+VOL[4]+VOL[5]+VOL[6]+VOL[7]+VOL[8]
 ;Users should update formula if using link-specific BPR coefficients 
 FUNCTION {
 
-    TC[1] = _Akcelik * (T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)) + _BPR * (T0*(1+{BPR Alpha}*(V/C)^{BPR Beta}))
+    TC[1] = _Akcelik * (T0*(1/LI.SPEED + ({Akcelik pb}*{Akcelik T}*((V/C+{Akcelik Offset}-1)+((V/C+{Akcelik Offset}-1)^2+(8*0.1*(V/C+{Akcelik Offset})/(C*{Akcelik T})))^0.5)))/(1/LI.SPEED)) + _BPR * (T0*(1+{BPR Alpha}*(V/C)^{BPR Beta})) + li.delay
         
 }
- 
+ ;2017-1011-JKlodzinski, added "+ li.delay" above to the Function TC{1}, at the end of...^{BPR Beta})), in an attempt to reduce the possible U-turn issue.
     ;Constrained speed used in Dummy Path
     LW.SPD = MAX(DISTANCE/LW.CGTIME*60,{Min Link Congested Speed})
   ;;;
