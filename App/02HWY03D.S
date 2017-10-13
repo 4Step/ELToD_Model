@@ -1,6 +1,6 @@
 ;;<<Default Template>><<HIGHWAY>><<Default>>;;
 ; Do not change filenames or add or remove FILEI/FILEO statements using an editor. Use Cube/Application Manager.
-RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN" MSG='Highway Assignment'
+RUN PGM=HIGHWAY PRNFILE="{SCENARIO_DIR}\RUNLOG@HR@.PRN"
 FILEI MATI[2] = "{SCENARIO_DIR}\Dir.MAT"
 FILEO PRINTO[4] = "{SCENARIO_DIR}\VDF@HR@.PRN"
 FILEO PRINTO[3] = "{SCENARIO_DIR}\RUNDETAIL_HOV@HR@.PRN"
